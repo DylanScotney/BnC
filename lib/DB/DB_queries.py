@@ -14,6 +14,24 @@ def select_all(table_name, db_conn):
 
     return sql_to_df(sql, db_conn)
 
+def get_max_value(table_name, column, db_conn):
+    """
+    Gets the most recent delivery date in the input table
+
+    :param table_name:      (str) name of table to query
+    :param column:          (str) name of column to query
+    :param db_conn:         (sqlite connection object)
+    """
+
+    sql = (
+    '''
+        SELECT MAX({col}) FROM {table}
+    '''.format(table=table_name, col=column)
+    )
+
+    cur = db_conn.cursor()
+
+    return cur.execute(sql).fetchall()[0][0]
 
 def get_most_recent_order_by_email(delivery_date, db_conn):
     """

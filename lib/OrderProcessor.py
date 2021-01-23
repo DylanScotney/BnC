@@ -1,24 +1,64 @@
 from datetime import datetime as dt
 import pandas as pd
-from lib.Order import Order
-from lib.Address import Address
-from lib.DB.credentials import ORDERS_DB_LOC
-import lib.DB.DB_queries as DB
-from lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
-# import csv
+from Order import Order
+from Address import Address
+from DB.credentials import ORDERS_DB_LOC
+import DB.DB_queries as DB
+from DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
 import sqlite3
-
+import argparse
 
 # The first delivery date for fornightly coffe
 INITIAL_COFFEE_DATE = dt(2020, 1, 9)
 
 def main():
+    parser = argparse.ArgumentParser(description="Process B&C Weekly Orders")
+    # parser.add_argument("-file", help="location of weekly orders csv file", type=str, required=True)
+    parser.add_argument("-date", help="delivery date of input orders YYYY/mm/dd", type=str, required=True)
+    args = parser.parse_args()
+
+    args.date = '2021/01/09'
+    argsfile = "C:/Users/dylan/Documents/Programming/ButterAndCrust/DB/OpenOrders_20210109.csv"
+    input_delivery_date = check_input_date(args.date)
+    input_file = argsfile
+    OrdersDB = DB.create_connection(ORDERS_DB_LOC)
+    check_last_delivery(input_delivery_date, OrdersDB)
+
+def check_last_delivery(delivery_date, db_conn):
+    last_delivery_date = DB.get_max_value("CompressedOrderHistory", "DeliveryDate", db_conn)
+    diff = delivery_date - dt.strptime(last_delivery_date[:10], "%Y-%m-%d")
+
+    if diff.days > 7:
+        throw_warning("No deliveries have been processed for last Saturday.")
+
+    if diff.days < 0:
+        throw_warning("Non chronological delivery dates.")
+
+
+def throw_warning(warning_str):
+    error = warning_str
+    warning = "\n\nWARNING: {e} Continue? [Y/N]\n\n".format(e=error)
+    cont = input(warning)
+    if cont.lower() == "n":
+        raise RuntimeError(error)
+
+def check_input_date(datestr):
+    """
+    Warns user if the input date is a Saturday and asks if would like to
+    continue.
+    """
+    date = dt.strptime(datestr, "%Y/%m/%d")
+
+    if date.weekday() != 5:
+        throw_warning("Input delivery date is not a Saturday.")
+
+    return date
+
+def proccess_orders(file_path, delivery_date):
     
     OrdersDB = DB.create_connection(ORDERS_DB_LOC)
     df = pd.read_csv("C:/Users/dylan/Documents/Programming/ButterAndCrust/DB/OpenOrders_20210109.csv", na_filter=False)
     
-    allorders = DB.select_all("CompressedOrderHistory", OrdersDB)
-    allorders.to_csv("C:/temp/test5.csv")
     input_delivery_date = dt(2020, 1, 9)
     orders = dict()
 
@@ -150,7 +190,6 @@ def main():
     values_to_sync = []
 
     prev_orders = DB.get_most_recent_order_by_email(input_delivery_date, OrdersDB)
-    print(prev_orders)
 
     for orderID in orders:
 
