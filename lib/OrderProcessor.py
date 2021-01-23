@@ -1,10 +1,10 @@
 from datetime import datetime as dt
 import pandas as pd
-from Order import Order
-from Address import Address
-from DB.credentials import ORDERS_DB_LOC
-import DB.DB_queries as DB
-from DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
+from .Order import Order
+from .Address import Address
+from .DB.credentials import ORDERS_DB_LOC
+from .DB import DB_queries as DB
+from .DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
 import sqlite3
 import argparse
 
@@ -17,25 +17,39 @@ def main():
     parser.add_argument("-date", help="delivery date of input orders YYYY/mm/dd", type=str, required=True)
     args = parser.parse_args()
 
-    args.date = '2021/01/09'
     argsfile = "C:/Users/dylan/Documents/Programming/ButterAndCrust/DB/OpenOrders_20210109.csv"
     input_delivery_date = check_input_date(args.date)
     input_file = argsfile
     OrdersDB = DB.create_connection(ORDERS_DB_LOC)
     check_last_delivery(input_delivery_date, OrdersDB)
 
+    OrdersDB = DB.create_connection(ORDERS_DB_LOC)
+    proccess_orders(input_file, input_delivery_date, OrdersDB)
+
+
 def check_last_delivery(delivery_date, db_conn):
+    """
+    Checks if the last processed delivery date was more than a week ago 
+    and warns if true
+    """
     last_delivery_date = DB.get_max_value("CompressedOrderHistory", "DeliveryDate", db_conn)
-    diff = delivery_date - dt.strptime(last_delivery_date[:10], "%Y-%m-%d")
 
-    if diff.days > 7:
+    if last_delivery_date is None:
         throw_warning("No deliveries have been processed for last Saturday.")
+    else:
+        diff = delivery_date - dt.strptime(last_delivery_date[:10], "%Y-%m-%d")
 
-    if diff.days < 0:
-        throw_warning("Non chronological delivery dates.")
+        if diff.days > 7:
+            throw_warning("No deliveries have been processed for last Saturday.")
+
+        if diff.days < 0:
+            throw_warning("Non chronological delivery dates.")
 
 
 def throw_warning(warning_str):
+    """
+    Throws a warning message and asks user if they would like to continue
+    """
     error = warning_str
     warning = "\n\nWARNING: {e} Continue? [Y/N]\n\n".format(e=error)
     cont = input(warning)
@@ -54,13 +68,24 @@ def check_input_date(datestr):
 
     return date
 
-def proccess_orders(file_path, delivery_date):
+def is_fortnightly_coffee(text):
+    """
+    Determines whether an item string is fornightly coffee lineitem
+    """
+    item = text.lower()
+    return ("coffee" in item
+            and ("every fortnight" in item
+            or "every other week" in item)
+            )
+
+def proccess_orders(file_path, delivery_date, db_conn):
     
-    OrdersDB = DB.create_connection(ORDERS_DB_LOC)
-    df = pd.read_csv("C:/Users/dylan/Documents/Programming/ButterAndCrust/DB/OpenOrders_20210109.csv", na_filter=False)
+    df = pd.read_csv(file_path, na_filter=False)
     
-    input_delivery_date = dt(2020, 1, 9)
+    input_delivery_date = delivery_date
     orders = dict()
+
+    prev_orders = DB.get_most_recent_order_by_email(input_delivery_date, db_conn)
 
     for _, row in df.iterrows():
 
@@ -69,6 +94,9 @@ def proccess_orders(file_path, delivery_date):
         # create a new Order() if this is a new orderID
         if orderID not in orders:
             orders[orderID] = Order(orderID, row['Email'])
+
+        # get customers previous order if there is any
+        prev_order = prev_orders[prev_orders['Email'].str.contains(orders[orderID].email)]
 
         orders[orderID].delivery_date = input_delivery_date
 
@@ -151,13 +179,25 @@ def proccess_orders(file_path, delivery_date):
         if row['Receipt Number'] and not row['Receipt Number'].isspace():
             orders[orderID].receipt_number = row['Receipt Number']
         
-        
         item_qty_str = row['Lineitem quantity']
         item_qty = int(item_qty_str) if item_qty_str else 0
         item_price_str = row['Lineitem price']
         item_price = float(item_price_str) if item_price_str else 0.0
         item = row['Lineitem name']
-        orders[orderID].add_lineitem(item, item_price, item_qty)
+
+        if is_fortnightly_coffee(item):
+                orders[orderID].receive_fortnightly_coffee = True
+
+        # if they recieved it in their previous orders then they don't this time
+        if prev_order['ReceivedFortnightlyCoffee'].any():
+            orders[orderID].receive_fortnightly_coffee = False
+
+        if (is_fortnightly_coffee(item)
+            and not orders[orderID].receive_fortnightly_coffee
+            ):
+            pass
+        else:
+            orders[orderID].add_lineitem(item, item_price, item_qty)
         
         billing_info = Address(
                                 row['Billing Name'],
@@ -187,43 +227,37 @@ def proccess_orders(file_path, delivery_date):
                             )
         orders[orderID].add_shipping_info(shipping_info)
 
-    values_to_sync = []
+    sync_orders_to_DB(orders, db_conn)
 
-    prev_orders = DB.get_most_recent_order_by_email(input_delivery_date, OrdersDB)
+
+def sync_orders_to_DB(orders, db_conn):
+    """
+    Synchronises orders to the CompressedOrderHistory table on the 
+    OrdersDB
+
+    :param orders:          (list of Orders())
+    :param db_conn:         (sqlite connection object)
+    """
+
+    values_to_sync = []
 
     for orderID in orders:
 
-        order = orders[orderID]
+        order = orders[orderID]      
 
-        prev_order = prev_orders[prev_orders['Email'].str.contains(order.email)]
-
-        recieveFornightlyCoffee = False
         lineitems = ""
 
         for item in order.lineitems:
-
-            low_item = item.lower()
-
-            if ("coffee" in low_item
-                and ("every fortnight" in low_item
-                or "every other week" in low_item)
-                ):
-                recieveFornightlyCoffee = True
-
             for _ in range(order.lineitems[item]['quantity']):
                 lineitems += item + "|"
 
-        if prev_order['ReceivedFortnightlyCoffee'].any():
-            recieveFornightlyCoffee = False
-
         lineitems = lineitems[:-1]
-        values_to_sync += [(orderID, order.email, order.delivery_date, lineitems, recieveFornightlyCoffee)]
+        values_to_sync += [(orderID, order.email, order.delivery_date, lineitems, order.receive_fortnightly_coffee)]
     
     # sync values to db table
     table = CompressedOrderHistory()
-    # DB.sync_table(table.name, table.columns.keys(), values_to_sync, OrdersDB)
+    DB.sync_table(table.name, table.columns.keys(), values_to_sync, db_conn)
+
 
 if __name__ == "__main__":
     main()
-
-    

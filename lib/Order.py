@@ -1,4 +1,4 @@
-from Address import Address
+from .Address import Address
 from datetime import datetime as dt
 import pandas as pd
 from datetime import timedelta
@@ -42,6 +42,7 @@ class Order():
         self.source = ""
         self.phone = ""
         self.receipt_number = ""
+        self.receive_fortnightly_coffee = False
 
     def add_payment_date(self, date):
         self.payment_date = date

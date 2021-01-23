@@ -14,6 +14,24 @@ def select_all(table_name, db_conn):
 
     return sql_to_df(sql, db_conn)
 
+def delete_all(table_name, db_conn):
+    """
+    Deletes all values from a table
+
+    :param table_name:      (str) name of table
+    :param db_conn:         (sqlite connection object)
+    """
+
+    sql = (
+    '''
+        DELETE FROM {table} WHERE 1
+    '''.format(table=table_name)
+    )
+
+    cur = db_conn.cursor()
+    cur.execute(sql)
+    db_conn.commit()
+
 def get_max_value(table_name, column, db_conn):
     """
     Gets the most recent delivery date in the input table
