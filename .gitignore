@@ -1,1 +1,9 @@
-./DB/* 
+DB/* 
+
+lib/DB/test_script.py
+
+*.xlsx
+
+*.html
+
+debug.log
