@@ -6,4 +6,6 @@ lib/DB/test_script.py
 
 *.html
 
+*.vscode
+
 debug.log
