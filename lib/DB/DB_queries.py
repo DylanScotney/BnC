@@ -64,7 +64,7 @@ def get_most_recent_order_by_email(delivery_date, db_conn):
 
     sql = (
     '''
-    SELECT ID, Email, DeliveryDate, Lineitems, ReceivedFortnightlyCoffee
+    SELECT ID, Email, DeliveryDate, Lineitems
     FROM
     (
         SELECT 
@@ -72,13 +72,20 @@ def get_most_recent_order_by_email(delivery_date, db_conn):
             Email, 
             DeliveryDate,
             Lineitems,
-            ReceivedFortnightlyCoffee,
             MAX(DeliveryDate) OVER (PARTITION BY Email) MaxDeliveryDate
-        from CompressedOrderHistory
+        FROM
+        (
+            SELECT 
+                ID,
+                Email, 
+                DeliveryDate,
+                Lineitems 
+            FROM CompressedOrderHistory
+            WHERE DeliveryDate < date('{d_date}') 
+            AND DeliveryDate >= date('{c_date}')
+        )
     )
-    WHERE DeliveryDate = MaxDeliveryDate 
-        AND DeliveryDate < date('{d_date}')
-        AND date(DeliveryDate) >= date('{c_date}')
+    WHERE DeliveryDate = MaxDeliveryDate
     '''.format(
             d_date=delivery_date,
             c_date=cut_off_date

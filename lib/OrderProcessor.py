@@ -20,13 +20,12 @@ from .templates.main.StandardHTMLTemplate import template
 def main():
     settings.configure()
     parser = argparse.ArgumentParser(description="Process B&C Weekly Orders")
-    # parser.add_argument("-file", help="location of weekly orders csv file", type=str, required=True)
+    parser.add_argument("-file", help="location of weekly orders csv file", type=str, required=True)
     parser.add_argument("-date", help="delivery date of input orders YYYY/mm/dd", type=str, required=True)
     args = parser.parse_args()
 
-    argsfile = "C:/Users/dylan/Documents/Programming/ButterAndCrust/DB/OpenOrders_20210109.csv"
     input_delivery_date = check_input_date(args.date)
-    input_file = argsfile
+    input_file = args.file
     OrdersDB = DB.create_connection(ORDERS_DB_LOC)
     check_last_delivery(input_delivery_date, OrdersDB)
 
@@ -192,16 +191,10 @@ def proccess_orders(file_path, delivery_date, db_conn):
         item_price = float(item_price_str) if item_price_str else 0.0
         item = row['Lineitem name']
 
-        if is_fortnightly_coffee(item):
-                orders[orderID].receive_fortnightly_coffee = True
-
-        # if they recieved it in their previous orders then they don't this time
-        if prev_order['ReceivedFortnightlyCoffee'].any():
-            orders[orderID].receive_fortnightly_coffee = False
-
         if (is_fortnightly_coffee(item)
-            and not orders[orderID].receive_fortnightly_coffee
+             and prev_order['Lineitems'].apply(func=is_fortnightly_coffee).any()
             ):
+            # don't add fornightly coffee if they had it in their last order
             pass
         else:
             orders[orderID].add_lineitem(item, item_price, item_qty)
@@ -267,8 +260,7 @@ def proccess_orders(file_path, delivery_date, db_conn):
                             orderID, 
                             order.email,
                             order.delivery_date,
-                            lineitems,
-                            order.receive_fortnightly_coffee
+                            lineitems
                         )]
         
         # build and save packing slip for the order
@@ -282,6 +274,9 @@ def proccess_orders(file_path, delivery_date, db_conn):
     csv_out_loc = DEFAULT_OUTPUT_LOCATION + "RequiredStock.csv"
     render_html_files_to_pdf(all_html_files, pdf_out_loc)
 
+    # delete any contents in working directory after use
+    delete_dir(temp_html_dir) 
+
     write_items_to_csv(["Lineitem", "Quantity"], total_items, csv_out_loc)
 
     # sync values to db table
@@ -294,7 +289,8 @@ def delete_dir(dirname):
     """
     Deletes a directory and all it's contents
     """
-    shutil.rmtree(dirname)
+    if os.path.exists(dirname):
+        shutil.rmtree(dirname)
 
 def write_items_to_csv(columns, items, outfile):
 
