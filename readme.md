@@ -2,10 +2,19 @@
 
 A simple command line package that processes orders and stock
 requirements for B & C 
-
 ## <u>Setup and Installation</u>
-
-### 1. **Package Config**
+### **1. Downloading the Package**
+1. [Install git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+2. Execute the following command on the command line
+```
+git clone https://github.com/DylanScotney/BnC.git
+```
+3. You can then update the package with
+```
+git pull
+```
+Note that after a new git pull you will need to reinstall the changes by following step 3. below.
+### **2. Package Config**
 The first step is to step up the 
 [PackageConfig.py](lib/PackageConfig.py) file to and define the
 following parameters. 
@@ -18,7 +27,7 @@ following parameters.
 | WORKING_DIRECTORY         | This is the path to a <u>**temporary**</u> directory that the package will use. **Ensure that nothing important is contained inside this directory as it will be continuously deleted/wiped.**
 | DEFAULT_OUTPUT_LOCATION  | The directory where the packing slips and order summaries will be outputted
 
-### 2. **Installation**
+### **3. Installation**
 <u>**After**</u> [PackageConfig.py](lib/PackageConfig.py) has been set
 up you will be able to install the package with the following command
 using the Anaconda Prompt command line
