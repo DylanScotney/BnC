@@ -308,12 +308,9 @@ def render_html_files_to_pdf(infiles, outfile):
     :param infiles:     (list) of html filepaths to render
     :param outfile:     (str) filepath of pdf output
     """
-
-    if OS_IS_WINDOWS:
-        config = pdfkit.configuration(wkhtmltopdf=PATH_WKHTMLTOPDF)
-        pdfkit.from_file(infiles, outfile, configuration=config)
-    else:
-        pdfkit.from_file(infiles, outfile)
+    
+    config = pdfkit.configuration(wkhtmltopdf=PATH_WKHTMLTOPDF)
+    pdfkit.from_file(infiles, outfile, configuration=config)
 
 
 def save_html_file(string_to_save, basepath, filename):
