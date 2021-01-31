@@ -48,7 +48,7 @@ Where delivery date must be formatted yyyy/MM/dd, and (for safety) the
 file path should use forward slashes. For example:
 
 ```
-BnC-Orders -date 2021/01/09 -file C:/Users/dylan/Documents/Programming/ButterAndCrust/DB/OpenOrders_20210109.csv"
+BnC-Orders -date 2021/01/09 -file C:/Users/dylan/Documents/Programming/BnC/DB/OpenOrders_20210109.csv"
 ```
 
 ## <u>Warnings & Things to Keep In Mind</u>
