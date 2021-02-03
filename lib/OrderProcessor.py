@@ -284,6 +284,8 @@ def proccess_orders(file_path, delivery_date, db_conn):
     # sync values to db table
     table = CompressedOrderHistory()
     DB.sync_table(table.name, table.columns.keys(), values_to_sync, db_conn)
+
+    return total_items
     #==========================================================================
 
 

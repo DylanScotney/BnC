@@ -12,4 +12,6 @@ lib/DB/test_script.py
 
 *.vscode
 
+*mockdata*
+
 debug.log
