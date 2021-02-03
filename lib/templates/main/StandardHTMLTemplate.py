@@ -6,7 +6,7 @@ template = ("""
     <img src="https://cdn.shopify.com/s/files/1/0463/6098/5764/files/1080_B_C_short_845ea474-14bb-4794-bfd7-c75c5beb7d8f.png?v=1600620183"; style="width: 240px; height: 120px;">
     </div>
     <div class="order-title">
-    <p class="text-align-right">
+    <p class="text-align-right-large">
     Order #{orderID}
     </p>
     <p class="text-align-right">
@@ -76,14 +76,9 @@ template = ("""
 
     <div class="footer">
     <p>
-    Thank you for shopping with us!
-    </p>
-    <p>
     <strong>
     {shop_name}
     </strong>
-    <br>
-    {shop_address_address1}, {shop_address_city}, {shop_address_zip}, {shop_address_country}
     <br>
     {shop_email}
     <br>
@@ -159,6 +154,11 @@ template = ("""
     text-align: right;
     }}
    
+    .text-align-right-large {{
+    text-align: right;
+    font-size: 24px;
+    }}
+
     .shipping-address {{
     float: left;
     min-width: 18em;
@@ -196,6 +196,7 @@ template = ("""
     align-items: center;
     margin: 1.4em 0;
     page-break-inside: avoid;
+    font-size: 20px;
     }}
    
     .flex-line-item-img {{
@@ -303,7 +304,5 @@ template = ("""
     margin: auto;
     }}
    </style>
-   
-   Butter & Crust
 """)
    

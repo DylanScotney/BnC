@@ -395,10 +395,6 @@ def build_order_packing_slip(order, html_template):
                 billing_address=order.billing_info,
                 lineitems=item_str,
                 shop_name="Butter & Crust",
-                shop_address_address1="70 Woodwarde Road",
-                shop_address_city="London",
-                shop_address_zip="SE22 8UL",
-                shop_address_country="United Kingdom",
                 shop_email="support@butterandcrust.com",
                 shop_domain="butterandcrust.com"
     )
