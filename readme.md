@@ -23,7 +23,7 @@ following parameters.
 |---------------------------|---------------------------------------|
 | DB_BASE_PATH              | This should be the path of the directory you would like to store the database                      |
 | OS_IS_WINDOWS             | True/False if operating system is windows or MAC
-| PATH_WKHTMLTOPDF          | If OS_IS_WINDOWS == True **then you must also install <u>[this](https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_msvc2015-win64.exe)</u>**. This variable should be the path to the .exe file after install
+| PATH_WKHTMLTOPDF          | If OS_IS_WINDOWS == True **then you must also install <u>[this](https://wkhtmltopdf.org/downloads.html)</u>**. This variable should be the path to the .exe file after install
 | WORKING_DIRECTORY         | This is the path to a <u>**temporary**</u> directory that the package will use. **Ensure that nothing important is contained inside this directory as it will be continuously deleted/wiped.**
 | DEFAULT_OUTPUT_LOCATION  | The directory where the packing slips and order summaries will be outputted
 
