@@ -2,9 +2,6 @@ from datetime import datetime as dt
 import pandas as pd
 import sqlite3
 import argparse
-from django.shortcuts import render
-from django.template.loader import render_to_string
-from django.conf import settings
 import pdfkit
 import os
 import shutil
@@ -20,7 +17,6 @@ from lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
 from lib.templates.main.StandardHTMLTemplate import template
 
 def main():
-    settings.configure()
     parser = argparse.ArgumentParser(description="Process B&C Weekly Orders")
     parser.add_argument("-file", help="location of weekly orders csv file", type=str, required=True)
     parser.add_argument("-date", help="delivery date of input orders YYYY/mm/dd", type=str, required=True)
@@ -30,8 +26,6 @@ def main():
     input_file = args.file
     OrdersDB = DB.create_connection(ORDERS_DB_LOC)
     check_last_delivery(input_delivery_date, OrdersDB)
-
-    OrdersDB = DB.create_connection(ORDERS_DB_LOC)
     proccess_orders(input_file, input_delivery_date, OrdersDB)
 
 def check_last_delivery(delivery_date, db_conn):

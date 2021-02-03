@@ -19,10 +19,10 @@ def select_all_by_delivery_date(table_name, start_date, end_date, db_conn):
     Selects all the orders in a given table between start_date and 
     end_date and returns as a pandas df.
 
-    :param table_name:          (str) name of the table to query
-    :param start_date:          (datetime) intial date of orders to get
-    :param end_date:            (datetime) final date of orders to get
-    :param db_conn:             (sqlite connection object)
+    :param table_name:      (str) name of the table to query
+    :param start_date:      (datetime) inclusive intial date of orders to get
+    :param end_date:        (datetime) exclusive final date of orders to get
+    :param db_conn:         (sqlite connection object)
 
     Note: this requires the table to have column "DeliveryDate"
     """
@@ -32,7 +32,7 @@ def select_all_by_delivery_date(table_name, start_date, end_date, db_conn):
         SELECT *
         FROM {table}
         WHERE DeliveryDate >= date('{i_date}') 
-        AND DeliveryDate <= date('{f_date}')
+        AND DeliveryDate < date('{f_date}')
     '''.format(
             table=table_name,
             i_date=start_date,
