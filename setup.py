@@ -7,7 +7,7 @@ setup(
     author="Butter & Crust",
     version="1.0.0",
     description="Package to process weekly customer orders",
-    packages=find_packages(exclude=['*tests']),
+    packages=find_packages(exclude=['*tests', '*testing']),
     install_requires=[
         'pandas',
         'argparse',

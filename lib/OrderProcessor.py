@@ -10,12 +10,12 @@ import os
 import shutil
 import csv
 
-from .Order import Order
-from .Address import Address
-from .PackageConfig import *
-from .DB import DB_queries as DB
-from .DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
-from .templates.main.StandardHTMLTemplate import template
+from lib.Order import Order
+from lib.Address import Address
+from lib.PackageConfig import *
+from lib.DB import DB_queries as DB
+from lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
+from lib.templates.main.StandardHTMLTemplate import template
 
 def main():
     settings.configure()
@@ -259,13 +259,16 @@ def proccess_orders(file_path, delivery_date, db_conn):
         values_to_sync += [(
                             orderID, 
                             order.email,
-                            order.delivery_date,
-                            lineitems
+                            order.delivery_date.strftime("%Y-%m-%d"),
+                            lineitems,
+                            str(order.billing_info),
+                            str(order.shipping_info),
+                            order.total
                         )]
         
         # build and save packing slip for the order
         html_template = build_order_packing_slip(order, template)
-        save_html_file(html_template, temp_html_dir, str(orderID)+".html")
+        save_file(html_template, temp_html_dir, str(orderID)+".html")
 
     all_html_files = ([temp_html_dir + f for f in os.listdir(temp_html_dir)
                       if f.lower().endswith('.html')])
@@ -317,7 +320,7 @@ def render_html_files_to_pdf(infiles, outfile):
     pdfkit.from_file(infiles, outfile, configuration=config)
 
 
-def save_html_file(string_to_save, basepath, filename):
+def save_file(string_to_save, basepath, filename):
     """
     Checks if directory exists before saving a file and creates
 

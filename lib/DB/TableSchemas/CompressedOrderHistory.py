@@ -9,7 +9,10 @@ class CompressedOrderHistory():
                     'ID': 'INTEGER NOT NULL',
                     'Email': 'TEXT NOT NULL',
                     'DeliveryDate': 'DATETIME NOT NULL',
-                    'Lineitems': 'TEXT NOT NULL'
+                    'Lineitems': 'TEXT NOT NULL',
+                    'BillingAddress': 'TEXT NOT NULL',
+                    'ShippingAddress': 'TEXT NOT NULL',
+                    'Total' : 'DOUBLE NOT NULL'
                     }
 
     def generate_create_table_string(self):
@@ -22,9 +25,13 @@ class CompressedOrderHistory():
         ID INTEGER NOT NULL,
         Email TEXT NOT NULL,
         DeliveryDate DATETIME NOT NULL,
-        Lineitems TEXT NOT NULL
+        Lineitems TEXT NOT NULL,
+        BillingAddress TEXT NOT NULL,
+        ShippingAddress TEXT NOT NULL,
+        Total DOUBLE NOT NULL
+        )
         ''')
 
-        indices = [self.PK]
+        indices = [self.PK, 'Email']
 
         return table, indices

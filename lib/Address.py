@@ -50,26 +50,3 @@ class Address():
 
         return return_str[:-5]
         
-        # return (
-        #     "Name: {name}\n"
-        #     + "Street: {street}\n"
-        #     + "Address1: {address1}\n"
-        #     + "Address2: {address2}\n"
-        #     + "Company: {company}\n"
-        #     + "City: {city}\n"
-        #     + "Zip: {zip}\n"
-        #     + "Province: {province}\n"
-        #     + "Country: {country}\n"
-        #     + "Phone: {phone}"
-        # ).format(
-        #     name=self.name,
-        #     street = self.street,
-        #     address1 = self.address1,
-        #     address2 = self.address2,
-        #     company = self.company,
-        #     city = self.city,
-        #     zip = self.zip,
-        #     province = self.province,
-        #     country = self.country,
-        #     phone = self.phone,
-        # )
