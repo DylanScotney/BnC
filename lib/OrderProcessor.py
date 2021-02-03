@@ -270,8 +270,10 @@ def proccess_orders(file_path, delivery_date, db_conn):
     all_html_files = ([temp_html_dir + f for f in os.listdir(temp_html_dir)
                       if f.lower().endswith('.html')])
     
-    pdf_out_loc = DEFAULT_OUTPUT_LOCATION + "PackingSlips.pdf"
-    csv_out_loc = DEFAULT_OUTPUT_LOCATION + "RequiredStock.csv"
+    file_output_format = DEFAULT_OUTPUT_LOCATION + "{name}_{date}.{ext}"
+
+    pdf_out_loc = file_output_format.format(name="PackingSlips", date=delivery_date.strftime("%Y%m%d"), ext="pdf")
+    csv_out_loc = file_output_format.format(name="RequiredStock", date=delivery_date.strftime("%Y%m%d"), ext="csv")
     render_html_files_to_pdf(all_html_files, pdf_out_loc)
 
     # delete any contents in working directory after use
