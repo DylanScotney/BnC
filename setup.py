@@ -18,7 +18,7 @@ setup(
         ],
     entry_points={
         'console_scripts': [
-            'BnC-Orders=lib.OrderProcessor:main'
+            'BnC-Orders=ConsoleScripts.OrderProcessor:main'
         ]
     }
 )
