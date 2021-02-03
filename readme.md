@@ -41,15 +41,28 @@ csv of open orders and produce packing slips as well as a summary of
 stock order requirements using the below command
 
 ```
-BnC-Orders -date <delivery date> -file <open orders file>
+BnC-process-orders -date <delivery date> -file <open orders file>
 ```
 
 Where delivery date must be formatted yyyy/MM/dd, and (for safety) the
 file path should use forward slashes. For example:
 
 ```
-BnC-Orders -date 2021/01/09 -file C:/Users/dylan/Documents/Programming/BnC/DB/OpenOrders_20210109.csv
+BnC-process-orders -date 2021/01/09 -file C:/Users/dylan/Documents/Programming/BnC/DB/OpenOrders_20210109.csv
 ```
+
+## <u>Commands</u>
+**Process all input orders and produce stock requirements**
+```
+BnC-process-orders -date <delivery date> -file <open orders csv>
+```
+**Produce packing slips for a given delivery date**
+```
+BnC-packing-slips -date <delivery date> -file <route stop numbers csv>
+```
+Note: route stop numbers csv is expecting columns: OrderID, Stop,
+Driver, Postcode
+
 
 ## <u>Warnings & Things to Keep In Mind</u>
 1. To correctly identify fortnightly Coffee orders, this package
