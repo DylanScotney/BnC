@@ -14,6 +14,8 @@ from lib.Order import Order
 from lib.Address import Address
 from lib.PackageConfig import *
 from lib.DB import DB_queries as DB
+import lib.General.Exceptions as e
+import lib.General.FileQueries as file_queries
 from lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
 from lib.templates.main.StandardHTMLTemplate import template
 
@@ -40,26 +42,15 @@ def check_last_delivery(delivery_date, db_conn):
     last_delivery_date = DB.get_max_value("CompressedOrderHistory", "DeliveryDate", db_conn)
 
     if last_delivery_date is None:
-        throw_warning("No deliveries have been processed for last Saturday.")
+        e.throw_warning("No deliveries have been processed for last Saturday.")
     else:
         diff = delivery_date - dt.strptime(last_delivery_date[:10], "%Y-%m-%d")
 
         if diff.days > 7:
-            throw_warning("No deliveries have been processed for last Saturday.")
+            e.throw_warning("No deliveries have been processed for last Saturday.")
 
         if diff.days < 0:
-            throw_warning("Non chronological delivery dates.")
-
-
-def throw_warning(warning_str):
-    """
-    Throws a warning message and asks user if they would like to continue
-    """
-    error = warning_str
-    warning = "\n\nWARNING: {e} Continue? [Y/N]\n\n".format(e=error)
-    cont = input(warning)
-    if cont.lower() == "n":
-        raise RuntimeError(error)
+            e.throw_warning("Non chronological delivery dates.")
 
 def check_input_date(datestr):
     """
@@ -69,7 +60,7 @@ def check_input_date(datestr):
     date = dt.strptime(datestr, "%Y/%m/%d")
 
     if date.weekday() != 5:
-        throw_warning("Input delivery date is not a Saturday.")
+        e.throw_warning("Input delivery date is not a Saturday.")
 
     return date
 
@@ -237,7 +228,7 @@ def proccess_orders(file_path, delivery_date, db_conn):
     temp_html_dir = WORKING_DIRECTORY + "order_htmls/"
 
     # delete any old contents before using
-    delete_dir(temp_html_dir) 
+    file_queries.delete_dir(temp_html_dir) 
 
     for orderID in orders:
         order = orders[orderID]      
@@ -268,7 +259,7 @@ def proccess_orders(file_path, delivery_date, db_conn):
         
         # build and save packing slip for the order
         html_template = build_order_packing_slip(order, template)
-        save_file(html_template, temp_html_dir, str(orderID)+".html")
+        file_queries.save_file(html_template, temp_html_dir, str(orderID)+".html")
 
     all_html_files = ([temp_html_dir + f for f in os.listdir(temp_html_dir)
                       if f.lower().endswith('.html')])
@@ -277,12 +268,12 @@ def proccess_orders(file_path, delivery_date, db_conn):
 
     pdf_out_loc = file_output_format.format(name="PackingSlips", date=delivery_date.strftime("%Y%m%d"), ext="pdf")
     csv_out_loc = file_output_format.format(name="RequiredStock", date=delivery_date.strftime("%Y%m%d"), ext="csv")
-    render_html_files_to_pdf(all_html_files, pdf_out_loc)
+    file_queries.render_html_files_to_pdf(all_html_files, pdf_out_loc, PATH_WKHTMLTOPDF)
 
     # delete any contents in working directory after use
-    delete_dir(temp_html_dir) 
+    file_queries.delete_dir(temp_html_dir) 
 
-    write_items_to_csv(["Lineitem", "Quantity"], total_items, csv_out_loc)
+    file_queries.write_items_to_csv(["Lineitem", "Quantity"], total_items, csv_out_loc)
 
     # sync values to db table
     table = CompressedOrderHistory()
@@ -290,54 +281,6 @@ def proccess_orders(file_path, delivery_date, db_conn):
 
     return total_items
     #==========================================================================
-
-
-def delete_dir(dirname):
-    """
-    Deletes a directory and all it's contents
-    """
-    if os.path.exists(dirname):
-        shutil.rmtree(dirname)
-
-def write_items_to_csv(columns, items, outfile):
-
-    with open(outfile, 'w', newline='') as csv_file:  
-        writer = csv.writer(csv_file)
-        writer.writerow([columns[0], columns[1]])
-        for key, value in items.items():
-            writer.writerow([key, value])
-
-
-def render_html_files_to_pdf(infiles, outfile):
-    """
-    Renders a list of html files to pdf
-
-    :param infiles:     (list) of html filepaths to render
-    :param outfile:     (str) filepath of pdf output
-    """
-    
-    config = pdfkit.configuration(wkhtmltopdf=PATH_WKHTMLTOPDF)
-    pdfkit.from_file(infiles, outfile, configuration=config)
-
-
-def save_file(string_to_save, basepath, filename):
-    """
-    Checks if directory exists before saving a file and creates
-
-    :param string_to_save:  (str) string to save to file
-    :param basepath:        (str) base path of the file
-    :param filename:        (str) filename
-    """
-
-    # create dir if it doesn't already exist 
-    if not os.path.exists(basepath):
-        os.makedirs(basepath)
-
-    filepath = basepath + filename
-
-    with open(filepath, 'w') as html_file:
-        html_file.write(string_to_save)
-
 
 def build_order_packing_slip(order, html_template):
     """

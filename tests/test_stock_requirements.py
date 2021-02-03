@@ -2,7 +2,7 @@ import pandas as pd
 import datetime as dt
 import os
 
-from lib.OrderProcessor import proccess_orders
+from ConsoleScripts.OrderProcessor import proccess_orders
 import lib.DB.DB_queries as DB
 from lib.PackageConfig import ORDERS_DB_LOC, WORKING_DIRECTORY
 
@@ -12,8 +12,6 @@ def test_stock_requirements():
     conn = DB.create_connection(ORDERS_DB_LOC)
     filepath = os.path.dirname(__file__) + "/mockdata/orders_20210123.csv"
 
-    DEFAULT_OUTPUT_LOCATION = WORKING_DIRECTORY
-    
     expected_items = {
         "Extra Loaf":	15,
         "Sweet Morning Treats" :	89,
