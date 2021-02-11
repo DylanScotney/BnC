@@ -55,5 +55,5 @@ def save_file(string_to_save, basepath, filename):
 
     filepath = basepath + filename
 
-    with open(filepath, 'w') as html_file:
+    with open(filepath, 'w', encoding="utf-8") as html_file:
         html_file.write(string_to_save)

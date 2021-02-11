@@ -42,6 +42,9 @@ class Order():
         self.source = ""
         self.phone = ""
         self.receipt_number = ""
+        self.bike_name = ""
+        self.route_name = ""
+        self.stop_on_route = ""
 
     def add_payment_date(self, date):
         self.payment_date = date

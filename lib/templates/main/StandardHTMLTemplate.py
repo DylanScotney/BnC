@@ -52,17 +52,16 @@ template = ("""
     
     </div>
     <hr>
-    <!-- 
-    {{% if order.note != blank %}}
     <div class="notes">
     <p class="subtitle-bold to-uppercase">
     Notes
     </p>
     <p class="notes-details">
-    {{ order.note }}
+    {ordernotes}
     </p>
     </div>
-    {{% endif %}}
+
+    <!-- 
     {{% if delivery_method.instructions != blank %}}
     <div class="notes">
     <p class="subtitle-bold to-uppercase">
@@ -85,6 +84,17 @@ template = ("""
     {shop_domain}
     </p>
     </div>
+
+    <div class="package-delivery-info">
+    <p>    
+    Route: {routename}
+    <br>
+    Stop: {stopnumber}
+    <br>
+    Bike: {bikename}
+    </p>
+    </div>
+
    </div>
    <style type="text/css">
     body {{
@@ -303,6 +313,13 @@ template = ("""
     left: 0;
     margin: auto;
     }}
+
+    .package-delivery-info{{
+    margin-top: 3cm;
+    font-size: 16;
+    font-weight: bold;
+    }}
+
    </style>
 """)
    

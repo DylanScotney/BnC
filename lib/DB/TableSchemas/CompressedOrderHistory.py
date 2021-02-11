@@ -12,7 +12,8 @@ class CompressedOrderHistory():
                     'Lineitems': 'TEXT NOT NULL',
                     'BillingAddress': 'TEXT NOT NULL',
                     'ShippingAddress': 'TEXT NOT NULL',
-                    'Total' : 'DOUBLE NOT NULL'
+                    'Total' : 'DOUBLE NOT NULL', 
+                    'DeliveryNotes' : 'TEXT NOT NULL'
                     }
 
     def generate_create_table_string(self):
@@ -28,7 +29,8 @@ class CompressedOrderHistory():
         Lineitems TEXT NOT NULL,
         BillingAddress TEXT NOT NULL,
         ShippingAddress TEXT NOT NULL,
-        Total DOUBLE NOT NULL
+        Total DOUBLE NOT NULL, 
+        DeliveryNotes TEXT NOT NULL
         )
         ''')
 

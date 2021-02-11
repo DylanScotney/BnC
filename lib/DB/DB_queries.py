@@ -107,7 +107,7 @@ def get_most_recent_order_by_email(delivery_date, db_conn):
                 ID,
                 Email, 
                 DeliveryDate,
-                Lineitems 
+                Lineitems
             FROM CompressedOrderHistory
             WHERE DeliveryDate < date('{d_date}') 
             AND DeliveryDate >= date('{c_date}')
