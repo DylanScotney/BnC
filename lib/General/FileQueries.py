@@ -1,4 +1,3 @@
-import pdfkit
 import os
 import shutil
 import csv
@@ -25,19 +24,6 @@ def write_items_to_csv(columns, items, outfile):
         writer.writerow([columns[0], columns[1]])
         for key, value in items.items():
             writer.writerow([key, value])
-
-
-def render_html_files_to_pdf(infiles, outfile, wkhtml_exe_path):
-    """
-    Renders a list of html files to pdf
-
-    :param infiles:                 (list) of html filepaths to render
-    :param outfile:                 (str) filepath of pdf output
-    :param wkhtml_exe_path:         (str) path to wkhtltopdf executable
-    """
-    
-    config = pdfkit.configuration(wkhtmltopdf=wkhtml_exe_path)
-    pdfkit.from_file(infiles, outfile, configuration=config)
 
 
 def save_file(string_to_save, basepath, filename):
