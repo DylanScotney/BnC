@@ -1,10 +1,10 @@
 import pandas as pd
 import csv
 
-from lib.Address import Address
-import lib.DB.DB_queries as DB
-from lib.PackageConfig import ORDERS_DB_LOC
-from lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
+from ButterAndCrust.lib.Address import Address
+import ButterAndCrust.lib.DB.DB_queries as DB
+from ButterAndCrust.lib.PackageConfig import ORDERS_DB_LOC
+from ButterAndCrust.lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
 
 all_orders = pd.read_csv("C:/Users/dylan/Documents/test/CompressedOrderHistory_new.csv", na_filter=False)
 

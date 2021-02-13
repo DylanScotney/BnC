@@ -5,11 +5,11 @@ import pandas as pd
 import datetime as dt
 import pdfkit
 
-from lib.General.WorkingDirectoryManager import WorkingDirectoryManager
-import lib.General.Exceptions as e
-import lib.DB.DB_queries as DB
-from lib.Order import Order
-import lib.General.FileQueries as FQ
+from ButterAndCrust.lib.General.WorkingDirectoryManager import WorkingDirectoryManager
+import ButterAndCrust.lib.General.Exceptions as e
+import ButterAndCrust.lib.DB.DB_queries as DB
+from ButterAndCrust.lib.Order import Order
+import ButterAndCrust.lib.General.FileQueries as FQ
 
 class PackingSlipManager():
     """

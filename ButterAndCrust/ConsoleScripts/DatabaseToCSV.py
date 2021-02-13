@@ -1,9 +1,9 @@
 import datetime as dt
 import argparse
 
-import lib.DB.DB_queries as DB
-import lib.PackageConfig as PC
-from lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
+import ButterAndCrust.lib.DB.DB_queries as DB
+import ButterAndCrust.lib.PackageConfig as PC
+from ButterAndCrust.lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
 
 def main():
     parser = argparse.ArgumentParser(description="Produce csv file of DB")

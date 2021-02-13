@@ -1,6 +1,7 @@
 import sqlite3
-import lib.DB.DB_queries as DB
 import pandas as pd
+
+import ButterAndCrust.lib.DB.DB_queries as DB
 
 DB_BASE_PATH = "c:/Users/dylan/Documents/Programming/ButterAndCrust/DB/"
 ORDERS_DB_NAME = "OrderHistory"

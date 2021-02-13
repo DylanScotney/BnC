@@ -7,14 +7,14 @@ import os
 import shutil
 import csv
 
-from lib.Order import Order
-from lib.Address import Address
-from lib.PackageConfig import *
-from lib.DB import DB_queries as DB
-import lib.General.Exceptions as e
-import lib.General.FileQueries as file_queries
-from lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
-from lib.templates.main.StandardHTMLTemplate import template
+from ButterAndCrust.lib.Order import Order
+from ButterAndCrust.ButterAndCrust.lib.Address import Address
+from ButterAndCrust.lib.PackageConfig import *
+from ButterAndCrust.lib.DB import DB_queries as DB
+import ButterAndCrust.lib.General.Exceptions as e
+import ButterAndCrust.lib.General.FileQueries as file_queries
+from ButterAndCrust.lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
+from ButterAndCrust.lib.templates.main.StandardHTMLTemplate import template
 
 def main():
     parser = argparse.ArgumentParser(description="Process B&C Weekly Orders")

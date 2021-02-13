@@ -1,7 +1,7 @@
 import datetime as dt
 
-import lib.DB.DB_queries as DB
-import lib.PackageConfig as config 
+import ButterAndCrust.lib.DB.DB_queries as DB
+import ButterAndCrust.lib.PackageConfig as config 
 
 conn = DB.create_connection(config.ORDERS_DB_LOC)
 

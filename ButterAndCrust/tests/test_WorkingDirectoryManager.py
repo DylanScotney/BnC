@@ -1,6 +1,6 @@
 import os
 
-from lib.General.WorkingDirectoryManager import WorkingDirectoryManager
+from ButterAndCrust.lib.General.WorkingDirectoryManager import WorkingDirectoryManager
 
 def test_safe_deletion_1():
     """
