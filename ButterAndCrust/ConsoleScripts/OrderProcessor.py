@@ -8,7 +8,7 @@ import shutil
 import csv
 
 from ButterAndCrust.lib.Order import Order
-from ButterAndCrust.ButterAndCrust.lib.Address import Address
+from ButterAndCrust.lib.Address import Address
 from ButterAndCrust.lib.PackageConfig import *
 from ButterAndCrust.lib.DB import DB_queries as DB
 import ButterAndCrust.lib.General.Exceptions as e
