@@ -5,7 +5,7 @@ setup(
 
     name="Butter & Crust Order Processor",
     author="Butter & Crust",
-    version="1.2.0",
+    version="1.2.1",
     description="Package to process weekly customer orders",
     packages=find_packages(exclude=['*tests', '*testing']),
     install_requires=[
