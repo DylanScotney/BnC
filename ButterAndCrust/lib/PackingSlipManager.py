@@ -27,7 +27,7 @@ class PackingSlipManager():
     """
 
     def __init__(self, output_file, working_dir, template, wkhtml_exe_path):
-        self.working_dir_manager = WorkingDirectoryManager(working_dir)
+        self.working_directory = WorkingDirectoryManager(working_dir)
         self.outfile = output_file
         self.html_template = template
         self.wkhtml_exe_path = wkhtml_exe_path
@@ -50,8 +50,8 @@ class PackingSlipManager():
         route_orders = pd.read_csv(route_order_file, na_filter=False)
 
         # delete any old contents before using working directory
-        self.working_dir_manager.clear_working_dir()
-        working_dir = self.working_dir_manager.working_directory
+        self.working_directory.clear_working_dir()
+        working_dir = self.working_directory.path
 
         fdate = delivery_date + dt.timedelta(days=1)
         orders = DB.select_all_by_delivery_date("CompressedOrderHistory",
@@ -150,7 +150,7 @@ class PackingSlipManager():
         self.render_html_files_to_pdf(all_html_files, self.outfile)
 
         # delete contents once finished with them
-        self.working_dir_manager.clear_working_dir()
+        self.working_directory.clear_working_dir()
 
     def build_order_packing_slip(self, order, html_template):
         """

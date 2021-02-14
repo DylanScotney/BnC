@@ -1,6 +1,7 @@
 from django.utils.crypto import get_random_string
 import shutil
 import os
+import posixpath
 
 class WorkingDirectoryManager():
     """
@@ -13,7 +14,7 @@ class WorkingDirectoryManager():
                                     directory
 
     Attributes:
-        _working_directory:         (str) full file path of the unique
+        _path:         (str) full file path of the unique
                                     working directory
     """
     def __init__(self, working_dir):
@@ -21,24 +22,26 @@ class WorkingDirectoryManager():
         # construct a unique working dir on init
         unique_working_dir = get_random_string(22)
 
-        while os.path.exists(working_dir + "/" + unique_working_dir):
+        path = posixpath.join(working_dir + "/" + unique_working_dir)
+        while os.path.exists(path):
             unique_working_dir = get_random_string(22)
+            path = posixpath.join(working_dir + "/" + unique_working_dir)
         
-        self._working_directory = working_dir + "/" + unique_working_dir + "/"
-        os.mkdir(self.working_directory)
+        self._path = posixpath.join(path, "")
+        os.mkdir(self.path)
     
     def __del__(self):
         """
         Deletes the working directory and all it's contents on
         deconstruction
         """
-        if os.path.exists(self.working_directory):
-            shutil.rmtree(self.working_directory)
+        if os.path.exists(self.path):
+            shutil.rmtree(self.path)
 
     def clear_working_dir(self):
-        if os.path.exists(self.working_directory):
-            for filename in os.listdir(self.working_directory):
-                file_path = os.path.join(self.working_directory, filename)
+        if os.path.exists(self.path):
+            for filename in os.listdir(self.path):
+                file_path = os.path.join(self.path, filename)
                 try:
                     if os.path.isfile(file_path) or os.path.islink(file_path):
                         os.unlink(file_path)
@@ -48,5 +51,5 @@ class WorkingDirectoryManager():
                     print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     @property
-    def working_directory(self):
-        return self._working_directory
+    def path(self):
+        return self._path
