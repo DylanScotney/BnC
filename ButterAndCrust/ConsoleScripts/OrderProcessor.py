@@ -9,11 +9,11 @@ import csv
 
 from ButterAndCrust.lib.Order import Order
 from ButterAndCrust.lib.Address import Address
-from ButterAndCrust.lib.PackageConfig import *
-from ButterAndCrust.lib.DB import DB_queries as DB
+import ButterAndCrust.lib.PackageConfig as PC
 import ButterAndCrust.lib.General.Exceptions as e
 import ButterAndCrust.lib.General.FileQueries as file_queries
-from ButterAndCrust.lib.DB.TableSchemas.CompressedOrderHistory import CompressedOrderHistory
+from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
+from ButterAndCrust.lib.DB.Tables.SQLTable import SQLTable
 from ButterAndCrust.lib.templates.main.StandardHTMLTemplate import template
 
 def main():
@@ -24,16 +24,17 @@ def main():
 
     input_delivery_date = check_input_date(args.date)
     input_file = args.file
-    OrdersDB = DB.create_connection(ORDERS_DB_LOC)
+    OrdersDB = SQLTable.create_connection(PC.ORDERS_DB_LOC)
     check_last_delivery(input_delivery_date, OrdersDB)
-    proccess_orders(input_file, input_delivery_date, OrdersDB)
+    proccess_orders(input_file, input_delivery_date, PC.ORDERS_DB_LOC)
 
-def check_last_delivery(delivery_date, db_conn):
+def check_last_delivery(delivery_date, db_file):
     """
     Checks if the last processed delivery date was more than a week ago 
     and warns if true
     """
-    last_delivery_date = DB.get_max_value("CompressedOrderHistory", "DeliveryDate", db_conn)
+    table = CompressedOrderHistory(db_file)
+    last_delivery_date = table.max("DeliveryDate")
 
     if last_delivery_date is None:
         e.throw_warning("No deliveries have been processed for last Saturday.")
@@ -68,13 +69,14 @@ def is_fortnightly_coffee(text):
             or "every other week" in item)
             )
 
-def proccess_orders(file_path, delivery_date, db_conn):
+def proccess_orders(file_path, delivery_date, db_file):
     
+    compressed_orders = CompressedOrderHistory(db_file)
     input_delivery_date = delivery_date
     orders = dict()
     total_items = dict()
     input_orders = pd.read_csv(file_path, na_filter=False)
-    prev_orders = DB.get_most_recent_order_by_email(input_delivery_date, db_conn)
+    prev_orders = compressed_orders.get_most_recent_order_by_email(delivery_date)
 
     # Process orders into a list of Order() objects so they're managable
     #==========================================================================
@@ -91,84 +93,11 @@ def proccess_orders(file_path, delivery_date, db_conn):
 
         orders[orderID].delivery_date = input_delivery_date
 
-        # Add order data 
-        if row['Paid at'] and not row['Paid at'].isspace():
-            orders[orderID].add_payment_date(dt.strptime(row['Paid at'][:18], '%Y-%m-%d %H:%M:%S'))
-
         if row['Total'] and not row['Total'].isspace():
             orders[orderID].update_total(float(row['Total']))
 
-        if row['Subtotal'] and not row['Subtotal'].isspace():
-            orders[orderID].update_subtotal(float(row['Subtotal']))
-
-        if row['Shipping'] and not row['Shipping'].isspace():
-            orders[orderID].shipping_fee = float(row['Shipping'])
-
-        if row['Taxes'] and not row['Taxes'].isspace():
-            orders[orderID].taxes = float(row['Taxes'])
-        
-        if row['Currency'] and not row['Currency'].isspace():
-            orders[orderID].ccy = row['Currency']
-        
-        if row['Financial Status'] and not row['Financial Status'].isspace():
-            orders[orderID].financial_status = row['Financial Status']
-
-        if row['Fulfillment Status'] and not row['Fulfillment Status'].isspace():
-            orders[orderID].fulfillment_status = row['Fulfillment Status']
-
-        if row['Fulfilled at'] and not row['Fulfilled at'].isspace():
-            orders[orderID].fulfillment_date = dt.strptime(row['Fulfilled at'][:18], '%Y-%m-%d %H:%M:%S')
-
-        if row['Accepts Marketing'] and not row['Accepts Marketing'].isspace():
-            orders[orderID].accepts_marketing = row['Accepts Marketing']
-        
-        if row['Discount Code'] and not row['Discount Code'].isspace():
-            orders[orderID].discount_code = row['Discount Code']
-
-        if row['Discount Amount'] and not row['Discount Amount'].isspace():
-            orders[orderID].discount_code = float(row['Discount Amount'])
-
-        if row['Shipping Method'] and not row['Shipping Method'].isspace():
-            orders[orderID].shipping_method = row['Shipping Method']
-
-        if row['Created at'] and not row['Created at'].isspace():
-            orders[orderID].creation_date = dt.strptime(row['Created at'][:18], '%Y-%m-%d %H:%M:%S')
-
         if row['Notes'] and not row['Notes'].isspace():
             orders[orderID].notes = row['Notes']
-
-        if row['Note Attributes'] and not row['Note Attributes'].isspace():
-            orders[orderID].notes_attributes = row['Note Attributes']
-
-        if row['Cancelled at'] and not row['Cancelled at'].isspace():
-            orders[orderID].cancellation_date = dt.strptime(row['Cancelled at'][:18], '%Y-%m-%d %H:%M:%S')
-        
-        if row['Payment Method'] and not row['Payment Method'].isspace():
-            orders[orderID].payment_method = row['Payment Method']
-
-        if row['Payment Reference'] and not row['Payment Reference'].isspace():
-            orders[orderID].payment_reference = row['Payment Reference']
-
-        if row['Refunded Amount'] and not row['Refunded Amount'].isspace():
-            orders[orderID].refunded_amount = float(row['Refunded Amount'])
-
-        if row['Vendor'] and not row['Vendor'].isspace():
-            orders[orderID].vendor = row['Vendor']        
-        
-        if row['Tags'] and not row['Tags'].isspace():
-            orders[orderID].tags = row['Tags']
-
-        if row['Risk Level'] and not row['Risk Level'].isspace():
-            orders[orderID].risk_level = row['Risk Level']
-
-        if row['Source'] and not row['Source'].isspace():
-            orders[orderID].source = row['Source']
-        
-        if row['Phone'] and not row['Phone'].isspace():
-            orders[orderID].phone = row['Phone']
-        
-        if row['Receipt Number'] and not row['Receipt Number'].isspace():
-            orders[orderID].receipt_number = row['Receipt Number']
         
         item_qty_str = row['Lineitem quantity']
         item_qty = int(item_qty_str) if item_qty_str else 0
@@ -176,12 +105,10 @@ def proccess_orders(file_path, delivery_date, db_conn):
         item_price = float(item_price_str) if item_price_str else 0.0
         item = row['Lineitem name']
 
-        if (is_fortnightly_coffee(item)
+        if not (is_fortnightly_coffee(item)
              and prev_order['Lineitems'].apply(func=is_fortnightly_coffee).any()
             ):
             # don't add fornightly coffee if they had it in their last order
-            pass
-        else:
             orders[orderID].add_lineitem(item, item_price, item_qty)
         
         billing_info = Address(
@@ -218,7 +145,7 @@ def proccess_orders(file_path, delivery_date, db_conn):
     # Technically this is inefficient as we are iterating over orders twice
     # but for small set this should be ok for now
     #==========================================================================
-    values_to_sync = []
+    compressed_rows = []
 
     for orderID in orders:
         order = orders[orderID]      
@@ -237,24 +164,23 @@ def proccess_orders(file_path, delivery_date, db_conn):
                 lineitems += item + "|"
 
         lineitems = lineitems[:-1]
-        values_to_sync += [(
-                            orderID, 
-                            order.email,
-                            order.delivery_date.strftime("%Y-%m-%d"),
-                            lineitems,
-                            str(order.billing_info),
-                            str(order.shipping_info),
-                            order.total,
-                            order.notes
-                        )]
+        compressed_rows += [{
+            "ID": orderID, 
+            "Email": order.email,
+            "DeliveryDate": order.delivery_date.strftime("%Y-%m-%d"),
+            "Lineitems": lineitems,
+            "BillingAddress": str(order.billing_info),
+            "ShippingAddress": str(order.shipping_info),
+            "Total": order.total,
+            "DeliveryNotes": order.notes
+        }]
         
-    file_output_format = DEFAULT_OUTPUT_LOCATION + "{name}_{date}.{ext}"
+    file_output_format = PC.DEFAULT_OUTPUT_LOCATION + "{name}_{date}.{ext}"
     csv_out_loc = file_output_format.format(name="RequiredStock", date=delivery_date.strftime("%Y%m%d"), ext="csv")
     file_queries.write_items_to_csv(["Lineitem", "Quantity"], total_items, csv_out_loc)
 
     # sync values to db table
-    table = CompressedOrderHistory()
-    DB.sync_table(table.name, table.columns.keys(), values_to_sync, db_conn)
+    compressed_orders.sync(compressed_rows, ["ID"])
 
     return total_items
     #==========================================================================

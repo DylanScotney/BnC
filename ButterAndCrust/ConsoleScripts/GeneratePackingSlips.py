@@ -17,8 +17,6 @@ def main():
     parser.add_argument("-file", help="file containing route order information", type=str, required=False)
     args = parser.parse_args()
 
-    OrdersDB = DB.create_connection(PC.ORDERS_DB_LOC)
-
     routes_file = args.file
     delivery_date = dt.datetime.strptime(args.date, "%Y/%m/%d")
     outfile = PC.DEFAULT_OUTPUT_LOCATION + "PackingSlips_{date}.pdf".format(date=delivery_date.strftime("%Y%m%d"))
@@ -26,7 +24,7 @@ def main():
     packing_slip_manager = PackingSlipManager(outfile, PC.WORKING_DIRECTORY,
                                               html_template, PC.PATH_WKHTMLTOPDF)
     
-    packing_slip_manager.produce_packing_slips(delivery_date, routes_file, OrdersDB)
+    packing_slip_manager.produce_packing_slips(delivery_date, routes_file, PC.ORDERS_DB_LOC)
 
 if __name__ == "__main__":
     main()

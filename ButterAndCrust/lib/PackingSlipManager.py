@@ -7,9 +7,9 @@ import pdfkit
 
 from ButterAndCrust.lib.General.WorkingDirectoryManager import WorkingDirectoryManager
 import ButterAndCrust.lib.General.Exceptions as e
-import ButterAndCrust.lib.DB.DB_queries as DB
 from ButterAndCrust.lib.Order import Order
 import ButterAndCrust.lib.General.FileQueries as FQ
+from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
 
 class PackingSlipManager():
     """
@@ -32,7 +32,7 @@ class PackingSlipManager():
         self.html_template = template
         self.wkhtml_exe_path = wkhtml_exe_path
 
-    def produce_packing_slips(self, delivery_date, route_order_file, conn):
+    def produce_packing_slips(self, delivery_date, route_order_file, db_file):
         """
         Produces the packing slips for a given delivery date and route 
         orders.
@@ -49,13 +49,15 @@ class PackingSlipManager():
 
         route_orders = pd.read_csv(route_order_file, na_filter=False)
 
+        order_table = CompressedOrderHistory(db_file)
+
         # delete any old contents before using working directory
         self.working_directory.clear_working_dir()
         working_dir = self.working_directory.path
 
         fdate = delivery_date + dt.timedelta(days=1)
-        orders = DB.select_all_by_delivery_date("CompressedOrderHistory",
-                                                delivery_date, fdate, conn)
+        idate = delivery_date
+        orders = order_table.select_by_delivery_date(idate, fdate)
 
         for _, ordr in orders.iterrows():
             

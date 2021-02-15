@@ -9,7 +9,6 @@ from ButterAndCrust.lib.PackageConfig import ORDERS_DB_LOC, WORKING_DIRECTORY
 def test_stock_requirements():
 
     delivery_date = dt.datetime(2021, 1, 23)
-    conn = DB.create_connection(ORDERS_DB_LOC)
     filepath = os.path.dirname(__file__) + "/mockdata/orders_20210123.csv"
 
     expected_items = {
@@ -41,7 +40,7 @@ def test_stock_requirements():
         "Monmouth Coffee. - Classic / Wholebean / 250g per week" : 1
     }
 
-    actual_items = proccess_orders(filepath, delivery_date, conn)
+    actual_items = proccess_orders(filepath, delivery_date, ORDERS_DB_LOC)
 
     dict_compare(actual_items, expected_items)
 
