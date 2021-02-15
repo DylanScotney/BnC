@@ -1,7 +1,6 @@
 import datetime as dt
 import argparse
 
-import ButterAndCrust.lib.DB.DB_queries as DB
 import ButterAndCrust.lib.PackageConfig as PC
 from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
 

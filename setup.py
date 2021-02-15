@@ -18,9 +18,9 @@ setup(
         ],
     entry_points={
         'console_scripts': [
-            'BnC-process-orders=ConsoleScripts.OrderProcessor:main',
-            'BnC-packing-slips=ConsoleScripts.GeneratePackingSlips:main',
-            'BnC-get-database=ConsoleScripts.DatabaseToCSV:main'
+            'BnC-process-orders=ButterAndCrust.ConsoleScripts.ProcessOrders:main',
+            'BnC-packing-slips=ButterAndCrust.ConsoleScripts.GeneratePackingSlips:main',
+            'BnC-get-database=ButterAndCrust.ConsoleScripts.DatabaseToCSV:main'
         ]
     }
 )

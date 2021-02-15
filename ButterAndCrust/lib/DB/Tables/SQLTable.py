@@ -24,7 +24,7 @@ class SQLTable(DBTable):
         self.db_file = db_file
         self._indices = indices
 
-    def _execute(self, sql, **options):
+    def _execute(self, sql, **parameters):
         """
         Executes and commits a sql command
 
@@ -36,7 +36,7 @@ class SQLTable(DBTable):
                 into the sql statement 
         """
 
-        self.general_execute(sql, self.conn, **options)
+        self.general_execute(sql, self.conn, **parameters)
 
     def _drop(self):
         """
@@ -46,12 +46,16 @@ class SQLTable(DBTable):
         sql = '''DROP TABLE ''' + self.name
         self._execute(sql)
 
-    def copy(self, new_name):
+    def copy(self, new_name, contents=False):
         """
         Copies the table format and it's indices without contents
 
         Args:
             new_name(``str``): Name of the new table being created
+
+        Keyword Args:
+            contents(``bool``): Whether to also copy the contents of
+                the table
 
         Returns:
             new_table(``SQLTable``): Instance of SQLTable object 
@@ -59,13 +63,19 @@ class SQLTable(DBTable):
 
         new_table = SQLTable(new_name, self.columns, self.db_file)
 
+        where = "WHERE 1" if contents else "WHERE 0"
+
         # First create the table
         sql = """
             CREATE TABLE {new} AS 
             SELECT *
-            FROM {copy_from}
-            WHERE 0;
-        """.format(new=new_table.name, copy_from=self.name)
+            FROM {copy_from} 
+            {where_clause}
+            ;
+        """.format(
+            new=new_table.name,
+            copy_from=self.name,
+            where_clause=where)
 
         self._execute(sql)
         
@@ -102,7 +112,7 @@ class SQLTable(DBTable):
         """
         Executes a select statement.
 
-        Args:
+        Keyword Args:
             columns(``list of str``, optional): list of column names to
                 query
             where(``str``, optional): where clause to filter query
@@ -236,7 +246,7 @@ class SQLTable(DBTable):
         # create temp table
         temp_table = self.copy("TempTable")
 
-        try:            
+        try:
             # insert all values to temp table
             temp_table.insert_many(rows)
 
@@ -343,7 +353,7 @@ class SQLTable(DBTable):
         return conn
 
     @staticmethod
-    def general_execute(sql, db_conn, **options):
+    def general_execute(sql, db_conn, **parameters):
         """
         Executes a general sql command. 
 
@@ -357,8 +367,8 @@ class SQLTable(DBTable):
         """
         cur = db_conn.cursor()
 
-        if 'values' in options:
-            cur.execute(sql, options['values'])
+        if 'values' in parameters:
+            cur.execute(sql, parameters['values'])
         else:
             cur.execute(sql)
 

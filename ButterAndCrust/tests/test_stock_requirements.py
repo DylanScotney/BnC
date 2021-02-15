@@ -2,14 +2,20 @@ import pandas as pd
 import datetime as dt
 import os
 
-from ButterAndCrust.ConsoleScripts.OrderProcessor import proccess_orders
+from ButterAndCrust.lib.OrderProcessor import OrderProcessor
+from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
 import ButterAndCrust.lib.DB.DB_queries as DB
-from ButterAndCrust.lib.PackageConfig import ORDERS_DB_LOC, WORKING_DIRECTORY
+
+DB_LOC = os.path.dirname(__file__) + "/mockdata/OrderHistory.db"
 
 def test_stock_requirements():
 
-    delivery_date = dt.datetime(2021, 1, 23)
+    delivery_date = "2021/01/23"
     filepath = os.path.dirname(__file__) + "/mockdata/orders_20210123.csv"
+    table = CompressedOrderHistory(DB_LOC)
+    processor = OrderProcessor(filepath, delivery_date, table)
+    processor._testing = True
+    outfile = "C:/temp/outfile.csv"
 
     expected_items = {
         "Extra Loaf":	15,
@@ -40,8 +46,9 @@ def test_stock_requirements():
         "Monmouth Coffee. - Classic / Wholebean / 250g per week" : 1
     }
 
-    actual_items = proccess_orders(filepath, delivery_date, ORDERS_DB_LOC)
+    actual_items = processor.process_orders(outfile)
 
+    print(actual_items)
     dict_compare(actual_items, expected_items)
 
 

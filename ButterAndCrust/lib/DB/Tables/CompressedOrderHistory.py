@@ -17,8 +17,8 @@ class CompressedOrderHistory(SQLTable):
             'DeliveryNotes'
         ]
         _INDICES = [
-            SQLTable.index("ID", ["ID"], is_unique=True),
-            SQLTable.index("Email", ["Email"], is_unique=False)
+            SQLTable.index("unique_ID", ["ID"], is_unique=True),
+            SQLTable.index("dup_Email", ["Email"], is_unique=False)
         ]
 
         super().__init__(_NAME, _COLUMNS, db_file, _INDICES)
@@ -30,7 +30,7 @@ class CompressedOrderHistory(SQLTable):
 
         Args:
             start_date(``datetime``): inclusive intial date of orders
-            end_date(``datetime``) exclusive final date of orders
+            end_date(``datetime``): exclusive final date of orders
 
         """
 

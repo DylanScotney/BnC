@@ -9,20 +9,22 @@ def delete_dir(dirname):
     if os.path.exists(dirname):
         shutil.rmtree(dirname)
 
-def write_items_to_csv(columns, items, outfile):
+def write_dict_to_csv(headers, values, outfile):
     """
     Writes a dictionary to csv such that each row will have 2 columns; 
     key and value.
 
-    :param columns:         (list) of column headers
-    :param items:           (dict) of values to save
-    :param outfile:         (str) output filepath
+    Args:
+        headers(``list``): list of column headers. 
+            Should be length 2
+        values(``dict``): values to save 
+        outfile(``str``): filepath of output location
     """
 
     with open(outfile, 'w', newline='') as csv_file:  
         writer = csv.writer(csv_file)
-        writer.writerow([columns[0], columns[1]])
-        for key, value in items.items():
+        writer.writerow([headers[0], headers[1]])
+        for key, value in values.items():
             writer.writerow([key, value])
 
 
