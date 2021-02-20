@@ -10,6 +10,7 @@ import ButterAndCrust.lib.General.Exceptions as e
 from ButterAndCrust.lib.Order import Order
 import ButterAndCrust.lib.General.FileQueries as FQ
 from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
+from ButterAndCrust.lib.items.OrderItems import Lineitems
 
 class PackingSlipManager():
     """
@@ -31,6 +32,9 @@ class PackingSlipManager():
         self.outfile = output_file
         self.html_template = template
         self.wkhtml_exe_path = wkhtml_exe_path
+    
+    def __del__(self):
+        self.working_directory.clear_working_dir()
 
     def produce_packing_slips(self, delivery_date, route_order_file, db_file):
         """
@@ -71,7 +75,8 @@ class PackingSlipManager():
                                                        "%Y-%m-%d")
 
             # store line items with price as 0.0 as price irrelevant here
-            for item in ordr['Lineitems'].split("|"):
+            for item_desc in ordr['Lineitems'].split("|"):
+                item = Lineitems.get(item_desc)
                 order.add_lineitem(item, 0.0, 1)
 
             # get the route order info for this orderID
@@ -162,8 +167,14 @@ class PackingSlipManager():
         :param html_template:   (str) formattable string of html template
         """
 
-        item_context = '''
+        item_context = '''        
         <div class="flex-line-item">
+        <div class="flex-line-item-img">
+        <div class="aspect-ratio aspect-ratio-square" style="width: 58px; height: 58px;">
+        <img src="{lineitem_image}" style="width: 58px; height: 58px;">
+        </div>
+        </div>
+
         <div class="flex-line-item-description">
         <p>
         <span class="line-item-description-line">
@@ -179,32 +190,19 @@ class PackingSlipManager():
         </div>
         '''
 
-        item_context_strong = '''
-        <div class="flex-line-item">
-        <div class="flex-line-item-description">
-        <p>
-        <span class="line-item-description-line">
-        <strong>{lineitem}</strong>
-        </span>
-        </p>
-        </div>
-        <div class="flex-line-item-quantity">
-        <p class="text-align-right">
-        <strong>{lineitem_qty}</strong>
-        </p>
-        </div>
-        </div>
-        '''
-
         item_str = ""
 
-        for item in order.lineitems:
-            qty = order.lineitems[item]['quantity']
+        for desc in order.lineitems:
+            item = order.lineitems[desc]['item']
+            qty = order.lineitems[desc]['quantity']
+            item_desc = item.friendly_desc if qty == 1 else "<strong>" + item.friendly_desc + "</strong>"
+            qty_str = str(qty) if qty == 1 else "<strong>" + str(qty) + "</strong>"
 
-            if qty > 1:
-                item_str += item_context_strong.format(lineitem=item, lineitem_qty=qty)
-            else:
-                item_str += item_context.format(lineitem=item, lineitem_qty=qty)
+            item_str += item_context.format(
+                                            lineitem_image=item.img,
+                                            lineitem=item_desc,
+                                            lineitem_qty=qty_str,
+                                        )
 
         return html_template.format(
                     orderID=order.ID,

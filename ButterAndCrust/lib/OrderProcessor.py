@@ -3,6 +3,7 @@ import pandas as pd
 
 import ButterAndCrust.lib.General.Exceptions as e
 from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
+from ButterAndCrust.lib.items.OrderItems import Lineitems
 import ButterAndCrust.lib.General.FileQueries as FQ
 from ButterAndCrust.lib.Order import Order
 from ButterAndCrust.lib.Address import Address
@@ -135,9 +136,9 @@ class OrderProcessor():
             item_qty = int(item_qty_str) if item_qty_str else 0
             item_price_str = row['Lineitem price']
             item_price = float(item_price_str) if item_price_str else 0.0
-            item = row['Lineitem name']
+            item = Lineitems.get(row['Lineitem name'])
 
-            if not (self._is_fortnightly_coffee(item)
+            if not (self._is_fortnightly_coffee(item.description)
                 and prev_order['Lineitems'].apply(func=self._is_fortnightly_coffee).any()
                 ):
                 # don't add fornightly coffee if they had it in their last order

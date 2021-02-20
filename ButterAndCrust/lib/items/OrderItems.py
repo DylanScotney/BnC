@@ -1,3 +1,9 @@
+import os
+import posixpath
+
+import ButterAndCrust.images
+
+IMG_DIR = os.path.dirname(ButterAndCrust.images.__file__)
 
 class _BaseItem(object):
     """
@@ -58,7 +64,7 @@ class _BaseFriendlyItem(_BaseItem):
     description
 
     Attributes:
-        friendly_desc(``str``): Customer friently description
+        friendly_desc(``str``): Customer friendly description
     """
 
     def __init__(self, desc, friendly_desc, price=None, img=None):
@@ -83,15 +89,23 @@ class _BaseFriendlyItem(_BaseItem):
         """
         return self._friendly_desc
 
-class _BaseCoffeeItem(_BaseFriendlyItem):
-    pass
+class _DefaultCoffeeItem(_BaseFriendlyItem):
+    """
+    Default coffee item used if item is unmatched
+    """
+
+    IMG = posixpath.join(IMG_DIR, "Coffee_logo.png")
+
+    def __init__(self, desc, price=None):
+        friendly_desc = desc.split("250g", 1)[0] + "250g"
+        super().__init__(desc, friendly_desc, price=price, img=self.IMG)
 
 class Lineitems(object):
     """
     To Do:
 
     Add images and prices to classes
-    """  
+    """
 
     class Subscription(_BaseItem):
         """
@@ -99,9 +113,10 @@ class Lineitems(object):
         """
         
         DESCRIPTION = "Butter & Crust Subscription (Loaf Included)"
+        IMG = posixpath.join(IMG_DIR, "Subscription_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION)
+            super().__init__(self.DESCRIPTION, img=self.IMG)
 
     class ExtraLoaf(_BaseItem):
         """
@@ -109,9 +124,10 @@ class Lineitems(object):
         """
 
         DESCRIPTION = "Extra Loaf"
+        IMG = posixpath.join(IMG_DIR, "ExtraLoaf_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION)
+            super().__init__(self.DESCRIPTION, img=self.IMG)
 
     class SweetMorningTreats(_BaseItem):
         """
@@ -119,9 +135,10 @@ class Lineitems(object):
         """
 
         DESCRIPTION = "Sweet Morning Treats"
+        IMG = posixpath.join(IMG_DIR, "Pastries_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION)
+            super().__init__(self.DESCRIPTION, img=self.IMG)
     
     class AppleJuice(_BaseItem):
         """
@@ -129,9 +146,10 @@ class Lineitems(object):
         """
 
         DESCRIPTION = "Townsend Farm Apple Juice 750ml"
+        IMG = posixpath.join(IMG_DIR, "AppleJuice_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION)
+            super().__init__(self.DESCRIPTION, img=self.IMG)
 
     class Granola(_BaseItem):
         """
@@ -139,19 +157,21 @@ class Lineitems(object):
         """
 
         DESCRIPTION = "Granola"
+        IMG = posixpath.join(IMG_DIR, "Granola_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION)
+            super().__init__(self.DESCRIPTION, img=self.IMG)
 
     class CulteredButter(_BaseItem):
         """
         Cultered butter
         """
 
-        DESCRIPTION = "Granola"
+        DESCRIPTION = "Cultured Butter 250g"
+        IMG = posixpath.join(IMG_DIR, "CulturedButter_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION)
+            super().__init__(self.DESCRIPTION, img=self.IMG)
 
     class Preserves(_BaseItem):
         """
@@ -159,9 +179,10 @@ class Lineitems(object):
         """
 
         DESCRIPTION = "Preserves 125g"
+        IMG = posixpath.join(IMG_DIR, "Preserves_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION)
+            super().__init__(self.DESCRIPTION, img=self.IMG)
 
     class ClassicWeeklyWholebean(_BaseFriendlyItem):
         """
@@ -170,9 +191,10 @@ class Lineitems(object):
 
         DESCRIPTION = "Monmouth Coffee. - Classic / Wholebean / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Classic / Wholebean / 250g"
+        IMG = posixpath.join(IMG_DIR, "ClassicCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class ClassicBiWeeklyWholebean(_BaseFriendlyItem):
         """
@@ -181,9 +203,10 @@ class Lineitems(object):
 
         DESCRIPTION = "Monmouth Coffee. - Classic / Wholebean / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Classic / Wholebean / 250g"
+        IMG = posixpath.join(IMG_DIR, "ClassicCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class EspressoWeeklyWholebean(_BaseFriendlyItem):
         """
@@ -192,9 +215,10 @@ class Lineitems(object):
 
         DESCRIPTION = "Monmouth Coffee. - Espresso / Wholebean / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Espresso / Wholebean / 250g"
+        IMG = posixpath.join(IMG_DIR, "EspressoCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
     
     class EspressoBiWeeklyWholebean(_BaseFriendlyItem):
         """
@@ -203,9 +227,10 @@ class Lineitems(object):
 
         DESCRIPTION = "Monmouth Coffee. - Espresso / Wholebean / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Espresso / Wholebean / 250g"
+        IMG = posixpath.join(IMG_DIR, "EspressoCoffee_logo.png")
             
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class OurPickWeeklyWholebean(_BaseFriendlyItem):
         """
@@ -214,9 +239,10 @@ class Lineitems(object):
 
         DESCRIPTION = "Monmouth Coffee. - Our Pick / Wholebean / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Our Pick / Wholebean / 250g"
+        IMG = posixpath.join(IMG_DIR, "OurPickCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class OurPickBiWeeklyWholebean(_BaseFriendlyItem):
         """
@@ -225,9 +251,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Our Pick / Wholebean / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Our Pick / Wholebean / 250g"
+        IMG = posixpath.join(IMG_DIR, "OurPickCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class ClassicWeeklyCoarse(_BaseFriendlyItem):
         """
@@ -236,9 +263,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Classic / Coarse / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Classic / Coarse / 250g"
+        IMG = posixpath.join(IMG_DIR, "ClassicCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class ClassicBiWeeklyCoarse(_BaseFriendlyItem):
         """
@@ -247,9 +275,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Classic / Coarse / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Classic / Coarse / 250g"
+        IMG = posixpath.join(IMG_DIR, "ClassicCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class EspressoWeeklyCoarse(_BaseFriendlyItem):
         """
@@ -258,8 +287,9 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Espresso / Coarse / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Espresso / Coarse / 250g"
+        IMG = posixpath.join(IMG_DIR, "EspressoCoffee_logo.png")
             
-        def __init__(self):super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+        def __init__(self):super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
     
     class EspressoBiWeeklyCoarse(_BaseFriendlyItem):
         """
@@ -268,9 +298,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Espresso / Coarse / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Espresso / Coarse / 250g"
+        IMG = posixpath.join(IMG_DIR, "EspressoCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class OurPickWeeklyCoarse(_BaseFriendlyItem):
         """
@@ -279,9 +310,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Our Pick / Coarse / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Our Pick / Coarse / 250g"
+        IMG = posixpath.join(IMG_DIR, "OurPickCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class OurPickBiWeeklyCoarse(_BaseFriendlyItem):
         """
@@ -290,9 +322,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Our Pick / Coarse / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Our Pick / Coarse / 250g"
+        IMG = posixpath.join(IMG_DIR, "OurPickCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class ClassicWeeklyMedium(_BaseFriendlyItem):
         """
@@ -301,9 +334,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Classic / Medium / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Classic / Medium / 250g"
+        IMG = posixpath.join(IMG_DIR, "ClassicCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class ClassicBiWeeklyMedium(_BaseFriendlyItem):
         """
@@ -312,9 +346,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Classic / Medium / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Classic / Medium / 250g"
+        IMG = posixpath.join(IMG_DIR, "ClassicCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class EspressoWeeklyMedium(_BaseFriendlyItem):
         """
@@ -323,9 +358,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Espresso / Medium / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Espresso / Medium / 250g"
+        IMG = posixpath.join(IMG_DIR, "EspressoCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
     
     class EspressoBiWeeklyMedium(_BaseFriendlyItem):
         """
@@ -334,9 +370,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Espresso / Medium / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Espresso / Medium / 250g"
+        IMG = posixpath.join(IMG_DIR, "EspressoCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class OurPickWeeklyMedium(_BaseFriendlyItem):
         """
@@ -345,9 +382,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Our Pick / Medium / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Our Pick / Medium / 250g"
+        IMG = posixpath.join(IMG_DIR, "OurPickCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class OurPickBiWeeklyMedium(_BaseFriendlyItem):
         """
@@ -356,9 +394,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Our Pick / Medium / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Our Pick / Medium / 250g"
+        IMG = posixpath.join(IMG_DIR, "OurPickCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     
     class ClassicWeeklyFine(_BaseFriendlyItem):
@@ -368,9 +407,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Classic / Fine / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Classic / Fine / 250g"
+        IMG = posixpath.join(IMG_DIR, "ClassicCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class ClassicBiWeeklyFine(_BaseFriendlyItem):
         """
@@ -379,9 +419,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Classic / Fine / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Classic / Fine / 250g"
+        IMG = posixpath.join(IMG_DIR, "ClassicCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class EspressoWeeklyFine(_BaseFriendlyItem):
         """
@@ -390,9 +431,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Espresso / Fine / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Espresso / Fine / 250g"
+        IMG = posixpath.join(IMG_DIR, "EspressoCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
     
     class EspressoBiWeeklyFine(_BaseFriendlyItem):
         """
@@ -401,9 +443,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Espresso / Fine / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Espresso / Fine / 250g"
+        IMG = posixpath.join(IMG_DIR, "EspressoCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class OurPickWeeklyFine(_BaseFriendlyItem):
         """
@@ -412,9 +455,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Our Pick / Fine / 250g per week"
         FRIENDLY_DESC = "Monmouth Coffee. - Our Pick / Fine / 250g"
+        IMG = posixpath.join(IMG_DIR, "OurPickCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     class OurPickBiWeeklyFine(_BaseFriendlyItem):
         """
@@ -423,9 +467,10 @@ class Lineitems(object):
         
         DESCRIPTION = "Monmouth Coffee. - Our Pick / Fine / 250g every other week"
         FRIENDLY_DESC = "Monmouth Coffee. - Our Pick / Fine / 250g"
+        IMG = posixpath.join(IMG_DIR, "OurPickCoffee_logo.png")
 
         def __init__(self):
-            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC)
+            super().__init__(self.DESCRIPTION, self.FRIENDLY_DESC, img=self.IMG)
 
     @classmethod
     def _discover_items(cls):
@@ -454,14 +499,17 @@ class Lineitems(object):
         Returns a Lineitem class instance, by its description.
 
         If the description is unmatched, will create a generic
-        _BaseItem instance.
+        item instance.
         """
 
         item_classes = cls._discover_items()
         try:
             item = item_classes[description]
         except KeyError:
-            # if item isn't recognised just return a _BaseItem
-            item = _BaseItem(description)
+            # if unmatched
+            if "coffee" in description.lower():
+                item = _DefaultCoffeeItem(description)
+            else:
+                item = _BaseItem(description)
         
         return item

@@ -68,3 +68,11 @@ def test_unmatched_item():
 
     assert expected == actual
 
+def test_order_image():
+    """
+    Tests Lineitems correctly gets an item image
+    """
+    desc = "Extra Loaf"
+    item = Lineitems.get(desc)
+    assert item.img.endswith("ExtraLoaf_logo.png")
+

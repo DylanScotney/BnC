@@ -66,10 +66,10 @@ class Order():
         """
         Stores line items with price and quantity in dictionary
         """
-        if item not in self.lineitems:
-            self.lineitems[item] = {'quantity' : qty, 'price per unit' : price}
+        if item.description not in self.lineitems:
+            self.lineitems[item.description] = {'item': item, 'quantity' : qty, 'price per unit' : price}
         else: 
-            self.lineitems[item]['quantity'] += qty
+            self.lineitems[item.description]['quantity'] += qty
 
     def update_total(self, amount):
         self.total += amount

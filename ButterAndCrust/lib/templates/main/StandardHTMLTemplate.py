@@ -211,7 +211,7 @@ template = ("""
    
     .flex-line-item-img {{
     margin-right: 1.4em;
-    min-width: {{ desired_image_size }}px;
+    min-width: 58px;
     }}
    
     .flex-line-item-description {{
@@ -315,7 +315,7 @@ template = ("""
     }}
 
     .package-delivery-info{{
-    margin-top: 3cm;
+    margin-top: 1cm;
     font-size: 16;
     font-weight: bold;
     }}
