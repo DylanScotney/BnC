@@ -28,7 +28,7 @@ class PackingSlipManager():
     """
 
     def __init__(self, output_file, working_dir, template, wkhtml_exe_path):
-        self.working_directory = WorkingDirectoryManager(working_dir)
+        self.working_directory = working_dir
         self.outfile = output_file
         self.html_template = template
         self.wkhtml_exe_path = wkhtml_exe_path
@@ -39,16 +39,35 @@ class PackingSlipManager():
     def produce_packing_slips(self, delivery_date, route_order_file, db_file):
         """
         Produces the packing slips for a given delivery date and route 
+        orders. Whilst safely handling the WorkingDirectory
+
+        Args:
+            delivery_date(``datetime``): date of delivery
+            route_order_file(``str``, csv): file containing information 
+                about the order deliveries are made. Required columns: 
+                ['Bike', 'Route', 'Stop on Route']
+            db_file(``str``, db file) filepath to db
+ 
+        """
+
+        with WorkingDirectoryManager(self.working_directory) as working_dir:
+
+            self._produce_packing_slips(delivery_date, route_order_file,
+                                        working_dir, db_file)
+
+    def _produce_packing_slips(self, delivery_date, route_order_file, working_dir, db_file):
+        """
+        Produces the packing slips for a given delivery date and route 
         orders.
 
-        :param delivery_date:           (datetime) date of delivery
-        :param route_order_file:        (csv) file containing information 
-                                        about the order deliveries are made
-                                        required columns: ['Bike', 
-                                                        'Route',
-                                                        'Stop on Route'
-                                                        ]
-        :param conn:                    (sqlite connection object)
+        Args:
+            delivery_date(``datetime``): date of delivery
+            route_order_file(``str``, csv): file containing information 
+                about the order deliveries are made. Required columns: 
+                ['Bike', 'Route', 'Stop on Route']
+            working_dir(``WorkingDirectorManager``) working directory 
+                encapsulated by the working directory manager
+            db_file(``str``, db file) filepath to db
         """
 
         route_orders = pd.read_csv(route_order_file, na_filter=False)
@@ -56,8 +75,7 @@ class PackingSlipManager():
         order_table = CompressedOrderHistory(db_file)
 
         # delete any old contents before using working directory
-        self.working_directory.clear_working_dir()
-        working_dir = self.working_directory.path
+        working_dir.clear_working_dir()
 
         fdate = delivery_date + dt.timedelta(days=1)
         idate = delivery_date
@@ -143,12 +161,12 @@ class PackingSlipManager():
 
             FQ.save_file(
                         order_html,
-                        working_dir,
+                        working_dir.path,
                         order_filename
                     )
 
         # create a list of all html files we have generated
-        all_html_files = ([working_dir + f for f in os.listdir(working_dir)
+        all_html_files = ([working_dir.path + f for f in os.listdir(working_dir.path)
                            if f.lower().endswith('.html')])
         
         # sort filenames so they are rendered in delivery order

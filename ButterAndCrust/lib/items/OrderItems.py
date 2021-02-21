@@ -1,9 +1,7 @@
 import os
 import posixpath
 
-import ButterAndCrust.images
-
-IMG_DIR = os.path.dirname(ButterAndCrust.images.__file__)
+from ButterAndCrust.lib.PackageConfig import IMG_DIR
 
 class _BaseItem(object):
     """

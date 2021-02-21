@@ -7,8 +7,15 @@ class WorkingDirectoryManager():
     """
     A working directory manager that will construct it's own unique 
     working directory and safely delete all it's contents on
-    deconstruction. 
+    deconstruction.
 
+    Usage:
+    To use WorkingDirectoryManager with safe garbage collection,
+
+    >>> with WorkingDirectoryManager(dir) as working_dir:
+    ...     dir_path = working_dir.path
+    ...     # safely use dir_path / working_dir 
+    
     Arguments:
         :param working_dir:         (str) file path to create a working
                                     directory
@@ -28,13 +35,22 @@ class WorkingDirectoryManager():
             path = posixpath.join(working_dir + "/" + unique_working_dir)
         
         self._path = posixpath.join(path, "")
-        os.mkdir(self.path)
+        os.makedirs(self.path, exist_ok=True)
+
+    def __enter__(self):  
+        return self
+        
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        self._delete_working_dir()
     
     def __del__(self):
+        self._delete_working_dir()
+
+    def _delete_working_dir(self):
         """
-        Deletes the working directory and all it's contents on
-        deconstruction
+        Deletes the working directory and all it's contents.
         """
+        print("delete")
         if os.path.exists(self.path):
             shutil.rmtree(self.path)
 
