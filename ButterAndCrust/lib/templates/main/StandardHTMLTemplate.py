@@ -53,7 +53,7 @@ template = ("""
     </div>
     <hr>
     <div class="notes">
-    <p class="subtitle-bold to-uppercase">
+    <p class="notes-details to-uppercase">
     Notes
     </p>
     <p class="notes-details">
@@ -258,6 +258,8 @@ template = ("""
    
     .notes .notes-details {{
     margin-top: 0.7em;
+    font-size: 24px;
+    font-weight: bold;
     }}
    
     .footer {{
