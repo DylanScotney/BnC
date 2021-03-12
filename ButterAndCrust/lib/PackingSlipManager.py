@@ -33,9 +33,6 @@ class PackingSlipManager():
         self.html_template = template
         self.wkhtml_exe_path = wkhtml_exe_path
     
-    def __del__(self):
-        self.working_directory.clear_working_dir()
-
     def produce_packing_slips(self, delivery_date, route_order_file, db_file):
         """
         Produces the packing slips for a given delivery date and route 
@@ -175,7 +172,7 @@ class PackingSlipManager():
         self.render_html_files_to_pdf(all_html_files, self.outfile)
 
         # delete contents once finished with them
-        self.working_directory.clear_working_dir()
+        working_dir.clear_working_dir()
 
     def build_order_packing_slip(self, order, html_template):
         """
@@ -185,14 +182,15 @@ class PackingSlipManager():
         :param html_template:   (str) formattable string of html template
         """
 
+        # images
+        # <div class="flex-line-item-img">
+        # <div class="aspect-ratio aspect-ratio-square" style="width: 58px; height: 58px;">
+        # <img src="{lineitem_image}" style="width: 58px; height: 58px;">
+        # </div>
+        # </div>
+
         item_context = '''        
         <div class="flex-line-item">
-        <div class="flex-line-item-img">
-        <div class="aspect-ratio aspect-ratio-square" style="width: 58px; height: 58px;">
-        <img src="{lineitem_image}" style="width: 58px; height: 58px;">
-        </div>
-        </div>
-
         <div class="flex-line-item-description">
         <p>
         <span class="line-item-description-line">
@@ -217,7 +215,7 @@ class PackingSlipManager():
             qty_str = str(qty) if qty == 1 else "<strong>" + str(qty) + "</strong>"
 
             item_str += item_context.format(
-                                            lineitem_image=item.img,
+                                            # lineitem_image=item.img,
                                             lineitem=item_desc,
                                             lineitem_qty=qty_str,
                                         )

@@ -14,7 +14,7 @@ from ButterAndCrust.lib.General.WorkingDirectoryManager import WorkingDirectoryM
 
 
 
-# manager = PackingSlipManager("C:\\temp\\PackingSlipTests.pdf", WORKING_DIRECTORY, template, PATH_WKHTMLTOPDF)
+manager = PackingSlipManager("C:\\temp\\PackingSlipTests.pdf", WORKING_DIRECTORY, template, PATH_WKHTMLTOPDF)
 
-# manager.produce_packing_slips(dt.datetime(2021, 2, 6), "C:\\Users\\dylan\\Documents\\Programming\\ButterAndCrust\\DB\\test_routes.csv", ORDERS_DB_LOC)
+manager.produce_packing_slips(dt.datetime(2021, 2, 6), "C:\\Users\\dylan\\Documents\\Programming\\ButterAndCrust\\DB\\test_routes.csv", ORDERS_DB_LOC)
 
