@@ -5,7 +5,7 @@ setup(
 
     name="Butter & Crust",
     author="Butter & Crust",
-    version="1.2.4",
+    version="1.2.4.1",
     description="Package to process weekly customer orders",
     packages=find_packages(exclude=['*tests', '*testing']),
     install_requires=[
