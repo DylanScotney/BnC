@@ -5,14 +5,15 @@ setup(
 
     name="Butter & Crust",
     author="Butter & Crust",
-    version="1.2.4.1",
+    version="1.3",
     description="Package to process weekly customer orders",
     packages=find_packages(exclude=['*tests', '*testing']),
     install_requires=[
         'pandas',
         'argparse',
         'django',
-        'pdfkit'
+        'pdfkit',
+        'airtable-python-wrapper>=0.15.2'
         ],
     package_data={'': ['*.png']},
     tests_require=[

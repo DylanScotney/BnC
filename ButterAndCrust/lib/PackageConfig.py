@@ -4,6 +4,10 @@ import posixpath
 import ButterAndCrust
 import ButterAndCrust.images
 
+# Airtable keys.
+base_key = "appWCrLerVduIq5SR"
+api_key = "keyQNWjWomXyaBGJK"
+
 # Location of DB
 DB_BASE_PATH = "C:/Users/dylan/Documents/Programming/ButterAndCrust/DB/"
 ORDERS_DB_NAME = "OrderHistory"

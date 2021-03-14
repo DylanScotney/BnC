@@ -2,7 +2,7 @@ import argparse
 
 import ButterAndCrust.lib.PackageConfig as PC
 from ButterAndCrust.lib.OrderProcessor import OrderProcessor
-from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
+from ButterAndCrust.lib.DB.Tables.AirTable import CompressedOrderHistory
 
 def main():
     parser = argparse.ArgumentParser(description="Process B&C Weekly Orders")
@@ -14,7 +14,9 @@ def main():
 
     outfile = PC.DEFAULT_OUTPUT_LOCATION + "/RequiredStock_{}.csv".format(d)
 
-    order_table = CompressedOrderHistory(PC.ORDERS_DB_LOC)
+    # TO DO: REBUILD BODY BEFORE PROCESSING ORDERS.
+    
+    order_table = CompressedOrderHistory(PC.base_key, PC.api_key)
     order_processor = OrderProcessor(args.file, args.date, order_table)
     order_processor.process_orders(outfile)
 

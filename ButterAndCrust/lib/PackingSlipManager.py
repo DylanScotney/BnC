@@ -9,7 +9,6 @@ from ButterAndCrust.lib.General.WorkingDirectoryManager import WorkingDirectoryM
 import ButterAndCrust.lib.General.Exceptions as e
 from ButterAndCrust.lib.Order import Order
 import ButterAndCrust.lib.General.FileQueries as FQ
-from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
 from ButterAndCrust.lib.items.OrderItems import Lineitems
 
 class PackingSlipManager():
@@ -33,7 +32,7 @@ class PackingSlipManager():
         self.html_template = template
         self.wkhtml_exe_path = wkhtml_exe_path
     
-    def produce_packing_slips(self, delivery_date, route_order_file, db_file):
+    def produce_packing_slips(self, delivery_date, route_order_file, order_table):
         """
         Produces the packing slips for a given delivery date and route 
         orders. Whilst safely handling the WorkingDirectory
@@ -50,9 +49,9 @@ class PackingSlipManager():
         with WorkingDirectoryManager(self.working_directory) as working_dir:
 
             self._produce_packing_slips(delivery_date, route_order_file,
-                                        working_dir, db_file)
+                                        working_dir, order_table)
 
-    def _produce_packing_slips(self, delivery_date, route_order_file, working_dir, db_file):
+    def _produce_packing_slips(self, delivery_date, route_order_file, working_dir, order_table):
         """
         Produces the packing slips for a given delivery date and route 
         orders.
@@ -69,14 +68,12 @@ class PackingSlipManager():
 
         route_orders = pd.read_csv(route_order_file, na_filter=False)
 
-        order_table = CompressedOrderHistory(db_file)
-
         # delete any old contents before using working directory
         working_dir.clear_working_dir()
 
         fdate = delivery_date + dt.timedelta(days=1)
         idate = delivery_date
-        orders = order_table.select_by_delivery_date(idate, fdate)
+        orders = order_table.get_all_by_delivery_date(idate, fdate)
 
         for _, ordr in orders.iterrows():
             
@@ -86,8 +83,7 @@ class PackingSlipManager():
             order.billing_info = ordr['BillingAddress']
             order.total = ordr['Total']
             order.notes = ordr['DeliveryNotes']            
-            order.delivery_date = dt.datetime.strptime(ordr['DeliveryDate'],
-                                                       "%Y-%m-%d")
+            order.delivery_date = ordr['DeliveryDate']
 
             # store line items with price as 0.0 as price irrelevant here
             for item_desc in ordr['Lineitems'].split("|"):
