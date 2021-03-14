@@ -1,8 +1,10 @@
 import argparse
+import datetime as dt
 
 import ButterAndCrust.lib.PackageConfig as PC
 from ButterAndCrust.lib.OrderProcessor import OrderProcessor
-from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
+from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import airCompressedOrderHistory, sqlCompressedOrderHistory
+from ButterAndCrust.ConsoleScripts.RebuildBody import rebuild_body
 
 def main():
     parser = argparse.ArgumentParser(description="Process B&C Weekly Orders")
@@ -13,10 +15,17 @@ def main():
     d = args.date.replace("/","")
 
     outfile = PC.DEFAULT_OUTPUT_LOCATION + "/RequiredStock_{}.csv".format(d)
+    order_airtable = airCompressedOrderHistory(PC.base_key, PC.api_key)
+    order_sqltable = sqlCompressedOrderHistory(PC.COLD_STORAGE_ORDERS_DB_LOC)
+    
+    order_processor = OrderProcessor(args.file, args.date, order_airtable)
+    order_processor.process_orders(outfile)    
 
-    order_table = CompressedOrderHistory(PC.ORDERS_DB_LOC)
-    order_processor = OrderProcessor(args.file, args.date, order_table)
-    order_processor.process_orders(outfile)
+    # Only rebuild body if in production 
+    if not PC.DEVELOPMENT:
+        date = dt.datetime.strptime(args.date, "%Y/%m/%d")
+        rebuild_body(order_airtable, order_sqltable, date=date)
+        
 
 if __name__ == "__main__":
     main()

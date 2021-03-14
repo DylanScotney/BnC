@@ -3,7 +3,7 @@ import datetime as dt
 import os
 
 from ButterAndCrust.lib.OrderProcessor import OrderProcessor
-from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
+from ButterAndCrust.lib.DB.Tables.AirTable import CompressedOrderHistory
 import ButterAndCrust.lib.DB.DB_queries as DB
 
 DB_LOC = os.path.dirname(__file__) + "/mockdata/OrderHistory.db"
@@ -12,7 +12,11 @@ def test_stock_requirements():
 
     delivery_date = "2021/01/23"
     filepath = os.path.dirname(__file__) + "/mockdata/orders_20210123.csv"
-    table = CompressedOrderHistory(DB_LOC)
+
+    base_key = "appWCrLerVduIq5SR"
+    api_key = "keyQNWjWomXyaBGJK"
+    table = CompressedOrderHistory(base_key, api_key)
+
     processor = OrderProcessor(filepath, delivery_date, table)
     processor._testing = True
     outfile = "C:/temp/outfile.csv"
@@ -48,8 +52,7 @@ def test_stock_requirements():
 
     actual_items = processor.process_orders(outfile)
 
-    print(actual_items)
-    dict_compare(actual_items, expected_items)
+    dict_compare(expected_items, actual_items)
 
 
 def dict_compare(expected_dict, actual_dict):

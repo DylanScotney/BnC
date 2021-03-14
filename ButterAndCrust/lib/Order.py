@@ -30,7 +30,7 @@ class Order():
         self.discount_amount = 0.0
         self.shipping_method = ""
         self.creation_date = None
-        self.notes = ""
+        self.notes = "None"
         self.note_attributes = ""
         self.cancellation_date = None
         self.payment_method = ""

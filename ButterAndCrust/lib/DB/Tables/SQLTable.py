@@ -234,6 +234,9 @@ class SQLTable(DBTable):
         Synchronise input values to a table. Will update existing rows
         if already exist. 
 
+        Datetime values must be passed in as sql friendly strings, e.g. 
+        dt.datetime(2021,2,6) -> '2021-02-06'
+
         Args:
             rows(``list of dict``): list rows to insert.
                 Each row must be dictionary with column names as keys.

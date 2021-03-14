@@ -2,7 +2,6 @@ import datetime as dt
 import pandas as pd
 
 import ButterAndCrust.lib.General.Exceptions as e
-from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import CompressedOrderHistory
 from ButterAndCrust.lib.items.OrderItems import Lineitems
 import ButterAndCrust.lib.General.FileQueries as FQ
 from ButterAndCrust.lib.Order import Order
@@ -24,18 +23,14 @@ class OrderProcessor():
             intput_file(``str``): filepath of the raw orders csv
             out_file(``str``): filepath of the output location
             delivery_date(``datetime``): delivery date of input orders
-            table(``CompressedOrderHistory``): table to store orders
+            table(``CompressedOrderHistory``): airtable to store orders
 
         """
 
         self.infile = input_file
         self.delivery_date = self._check_input_date(delivery_date)
 
-        if isinstance(table, CompressedOrderHistory):
-            self.orders_table = table
-        else: 
-            err = "Input table is not an instance of CompressedOrderHistory"
-            raise TypeError(err)
+        self.orders_table = table
 
         self._testing = False # private member for testing
     
@@ -74,7 +69,8 @@ class OrderProcessor():
         Checks if the last processed delivery date was more than a week ago 
         and warns if true
         """
-        last_delivery_date = dt.datetime.strptime(self.orders_table.max("DeliveryDate"), "%Y-%m-%d")
+
+        last_delivery_date = self.orders_table.get_max('DeliveryDate')
 
         if last_delivery_date is None:
             err = "No deliveries have been processed for last Saturday."
@@ -109,7 +105,8 @@ class OrderProcessor():
         orders = dict()
         total_items = dict()
         input_orders = pd.read_csv(self.infile, na_filter=False)
-        prev_orders = self.orders_table.get_most_recent_order_by_email(self.delivery_date)
+
+        prev_orders = self.orders_table.get_most_recent_order_by_email(current_date=self.delivery_date)
 
         # Process orders into a list of Order() objects so they're managable
         #==========================================================================
@@ -211,7 +208,7 @@ class OrderProcessor():
         FQ.write_dict_to_csv(["Lineitem", "Quantity"], total_items, outfile)
 
         # sync values to db table
-        self.orders_table.sync(compressed_rows, ["ID"])
+        self.orders_table.sync_by_ID(compressed_rows)
 
         return total_items
         #==========================================================================
