@@ -22,7 +22,8 @@ setup(
         'console_scripts': [
             'BnC-process-orders=ButterAndCrust.ConsoleScripts.ProcessOrders:main',
             'BnC-packing-slips=ButterAndCrust.ConsoleScripts.GeneratePackingSlips:main',
-            'BnC-get-database=ButterAndCrust.ConsoleScripts.DatabaseToCSV:main'
+            'BnC-get-database=ButterAndCrust.ConsoleScripts.DatabaseToCSV:main',
+            'BnC-rebuild-body=ButterAndCrust.ConsoleScript.RebuildBody:main'
         ],
     }
 )

@@ -90,7 +90,17 @@ class airCompressedOrderHistory(Airtable, ICompressedOrderHistory):
         Converts list of records into a pandas df
         """
         df = pd.DataFrame.from_records((r['fields'] for r in records))
+
+        # convert dtypes
         df['DeliveryDate'] = pd.to_datetime(df['DeliveryDate'], format='%Y-%m-%dT%H:%M:%S.%fZ')
+        df['Last Modified'] = pd.to_datetime(df['Last Modified'], format='%Y-%m-%dT%H:%M:%S.%fZ')
+        df['Created'] = pd.to_datetime(df['Created'], format='%Y-%m-%dT%H:%M:%S.%fZ')
+        df['Email'] = df['Email'].astype('unicode')
+        df['Lineitems'] = df['Lineitems'].astype('unicode')
+        df['BillingAddress'] = df['BillingAddress'].astype('unicode')
+        df['ShippingAddress'] = df['ShippingAddress'].astype('unicode')
+        df['DeliveryNotes'] = df['DeliveryNotes'].astype('unicode')
+
         return df
 
     def get_max(self, col_name):
@@ -326,7 +336,7 @@ class sqlCompressedOrderHistory(SQLTable, ICompressedOrderHistory):
     def sync_by_ID(self, records):
         """
         Will syncronise a list of records onto the table. 
-        Updates existing records and inserts new ones
+        Updates existing records and inserts new ones. 
 
         Args:
             records(``list``): list of records to sync

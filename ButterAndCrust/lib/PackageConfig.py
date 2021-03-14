@@ -4,14 +4,16 @@ import posixpath
 import ButterAndCrust
 import ButterAndCrust.images
 
-# Airtable keys.
-base_key = "appWCrLerVduIq5SR"
-api_key = "keyQNWjWomXyaBGJK"
+DEVELOPMENT = True
 
-# Location of DB
+# Airtable keys.
+base_key = "appWCrLerVduIq5SR" if DEVELOPMENT else ""
+api_key = "keyQNWjWomXyaBGJK" if DEVELOPMENT else ""
+
+# Location of cold storage DB
 DB_BASE_PATH = "C:/Users/dylan/Documents/Programming/ButterAndCrust/DB/"
 ORDERS_DB_NAME = "OrderHistory"
-ORDERS_DB_LOC = DB_BASE_PATH + ORDERS_DB_NAME + ".db"
+COLD_STORAGE_ORDERS_DB_LOC = DB_BASE_PATH + ORDERS_DB_NAME + ".db"
 
 # Must install [https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_msvc2015-win64.exe]
 PATH_WKHTMLTOPDF = "C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe"
