@@ -70,7 +70,7 @@ class OrderProcessor():
         and warns if true
         """
 
-        last_delivery_date = self.orders_table.get_max_deliverydate()
+        last_delivery_date = self.orders_table.get_max('DeliveryDate')
 
         if last_delivery_date is None:
             err = "No deliveries have been processed for last Saturday."
@@ -208,7 +208,7 @@ class OrderProcessor():
         FQ.write_dict_to_csv(["Lineitem", "Quantity"], total_items, outfile)
 
         # sync values to db table
-        self.orders_table.sync(compressed_rows)
+        self.orders_table.sync_by_ID(compressed_rows)
 
         return total_items
         #==========================================================================
