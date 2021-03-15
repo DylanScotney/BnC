@@ -93,8 +93,6 @@ class airCompressedOrderHistory(Airtable, ICompressedOrderHistory):
 
         # convert dtypes
         df['DeliveryDate'] = pd.to_datetime(df['DeliveryDate'], format='%Y-%m-%dT%H:%M:%S.%fZ')
-        df['Last Modified'] = pd.to_datetime(df['Last Modified'], format='%Y-%m-%dT%H:%M:%S.%fZ')
-        df['Created'] = pd.to_datetime(df['Created'], format='%Y-%m-%dT%H:%M:%S.%fZ')
         df['Email'] = df['Email'].astype('unicode')
         df['Lineitems'] = df['Lineitems'].astype('unicode')
         df['BillingAddress'] = df['BillingAddress'].astype('unicode')

@@ -13,7 +13,7 @@ def main():
     df = order_airtable.get_all_by_delivery_date(dt.datetime.min, end_date)
     df['DeliveryDate'] = df['DeliveryDate'].dt.strftime('%Y-%m-%d')
 
-    orders_for_cold_storage = df.drop(columns=['Last Modified', 'Created']).to_dict('records')
+    orders_for_cold_storage = df.to_dict('records')
     order_sqltable.sync_by_ID(orders_for_cold_storage)
 
     IDs_to_del = [r['ID'] for r in orders_for_cold_storage]

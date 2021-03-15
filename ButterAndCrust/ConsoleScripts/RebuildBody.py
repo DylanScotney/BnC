@@ -38,7 +38,7 @@ def rebuild_body(body, head, date=dt.datetime.today(), cutoff=29):
     df['DeliveryDate'] = df['DeliveryDate'].dt.strftime('%Y-%m-%d')
 
     # Drop unused columns and convert df to records format
-    orders_for_cold_storage = df.drop(columns=['Last Modified', 'Created']).to_dict('records')
+    orders_for_cold_storage = df.to_dict('records')
 
     # Sync orders to cold storage 
     body.sync_by_ID(orders_for_cold_storage)
