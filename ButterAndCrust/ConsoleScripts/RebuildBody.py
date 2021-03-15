@@ -31,30 +31,7 @@ def rebuild_body(body, head, date=dt.datetime.today(), cutoff=29):
     end_date = date - dt.timedelta(days=cutoff)
 
     # Get all orders to move from head table
-    df = head.get_all_by_delivery_date(dt.datetime.min, end_date)
-    max_date = df['DeliveryDate'].max()
-
-    # Construct a command line warning before moving to cold storage
-    warning = """
-        \nWARNING:\n
-        Moving {num_orders} from before {d} from airtable into cold 
-        storage SQLLite DB.\n\n
-        Continue?\n
-        [Y/N/S (show orders)]\n\n
-    """.format(
-            num_orders=len(df.index),
-            d=max_date
-        )
-
-    cont = input(warning)
-
-    if cont.lower() == "s":
-        print(df)
-        warning = "\n\n Continue?\n\n [Y/N]"
-        cont2 = input(warning)
-
-    if cont.lower() == "n" or cont2.lower() == "n":
-        raise RuntimeError("User cancelled sqlite body rebuild")
+    df = head.get_all_by_delivery_date(dt.datetime.min, dt.datetime.max)
 
     # convert delivery date column to string so it can be safely synced
     # to no sql
@@ -66,17 +43,17 @@ def rebuild_body(body, head, date=dt.datetime.today(), cutoff=29):
     # Sync orders to cold storage 
     body.sync_by_ID(orders_for_cold_storage)
 
-    # Get order IDs of the records we are moving 
-    IDs_to_del = [r['ID'] for r in orders_for_cold_storage]
+    # # Get order IDs of the records we are moving 
+    # IDs_to_del = [r['ID'] for r in orders_for_cold_storage]
 
-    # Get airtable records of the IDs we are moving
-    records_to_del = head.get_all_by_IDs(IDs_to_del)
+    # # Get airtable records of the IDs we are moving
+    # records_to_del = head.get_all_by_IDs(IDs_to_del)
     
-    # airtable record IDs
-    recordIDs_to_del = [r['id'] for r in records_to_del]
+    # # airtable record IDs
+    # recordIDs_to_del = [r['id'] for r in records_to_del]
 
-    # batch delete from head using airtable record id    
-    head.batch_delete(recordIDs_to_del)
+    # # batch delete from head using airtable record id    
+    # head.batch_delete(recordIDs_to_del)
 
 if __name__ == "__main__":
     main()
