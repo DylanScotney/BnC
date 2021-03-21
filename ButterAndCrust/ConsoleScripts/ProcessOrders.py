@@ -16,7 +16,6 @@ def main():
 
     outfile = PC.DEFAULT_OUTPUT_LOCATION + "/RequiredStock_{}.csv".format(d)
     order_airtable = airCompressedOrderHistory(PC.base_key, PC.api_key)
-    order_sqltable = sqlCompressedOrderHistory(PC.COLD_STORAGE_ORDERS_DB_LOC)
     
     order_processor = OrderProcessor(args.file, args.date, order_airtable)
     order_processor.process_orders(outfile)    
