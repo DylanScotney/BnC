@@ -21,10 +21,6 @@ def main():
     order_processor = OrderProcessor(args.file, args.date, order_airtable)
     order_processor.process_orders(outfile)    
 
-    # Only rebuild body if in production 
-    if not PC.DEVELOPMENT:
-        date = dt.datetime.strptime(args.date, "%Y/%m/%d")
-        rebuild_body(order_airtable, order_sqltable, date=date)
         
 
 if __name__ == "__main__":
