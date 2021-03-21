@@ -6,25 +6,48 @@ from ButterAndCrust.lib.OrderProcessor import OrderProcessor
 from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import airCompressedOrderHistory, sqlCompressedOrderHistory
 
 def main():
-    order_airtable = airCompressedOrderHistory(PC.base_key, PC.api_key)
-    order_sqltable = sqlCompressedOrderHistory(PC.COLD_STORAGE_ORDERS_DB_LOC)
+    delivery_date = "2021/01/23"
+    filepath = "C:/Users/dylan/Documents/Programming/ButterAndCrust/ButterAndCrust/tests/mockdata/orders_20210123.csv"
 
-    end_date = dt.datetime.today() - dt.timedelta(days=29)
-    df = order_airtable.get_all_by_delivery_date(dt.datetime.min, end_date)
-    df['DeliveryDate'] = df['DeliveryDate'].dt.strftime('%Y-%m-%d')
+    base_key = "appWCrLerVduIq5SR"
+    api_key = "keyQNWjWomXyaBGJK"
+    table = airCompressedOrderHistory(base_key, api_key)
 
-    orders_for_cold_storage = df.to_dict('records')
-    order_sqltable.sync_by_ID(orders_for_cold_storage)
+    processor = OrderProcessor(filepath, delivery_date, table)
+    outfile = "C:/temp/outfile.csv"
 
-    IDs_to_del = [r['ID'] for r in orders_for_cold_storage]
-    # order_airtable.batch_delete()
-    print(IDs_to_del)
-    records_to_del = order_airtable.get_all_by_IDs(IDs_to_del)
-    
-    recordIDs_to_del = [r['id'] for r in records_to_del]
-    print(recordIDs_to_del)
-    
-    order_airtable.batch_delete(recordIDs_to_del)
+    expected_items = {
+        "Extra Loaf":	15,
+        "Sweet Morning Treats" :	89,
+        "Butter & Crust Subscription (Loaf Included)" :	134,
+        "Granola" : 28,
+        "Townsend Farm Apple Juice 750ml" : 33,
+        "Cultured Butter 250g" : 57,
+        "Preserves 125g" : 62,
+        "Monmouth Coffee. - Our Pick / Wholebean / 250g per week" : 8,
+        "Monmouth Coffee. - Our Pick / Medium (Filter/Aeropress) / 250g every other week" : 1,
+        "Monmouth Coffee. - Espresso / Wholebean / 250g per week" : 3,
+        "Four Week Gift Subscription" : 2,
+        "Monmouth Coffee. - Classic / Fine (Espresso/Moka Pot) / 250g per week" : 2,
+        "Monmouth Coffee. - Classic / Wholebean / 250g every other week" : 2,
+        "Monmouth Coffee. - Classic / Medium (Filter/Aeropress) / 250g every other week" : 1,
+        "Monmouth Coffee. - Our Pick / Coarse (French Press) / 250g per week" : 6,
+        "Monmouth Coffee. - Our Pick / Fine (Espresso/Moka Pot) / 250g every other week" : 1,
+        "Monmouth Coffee. - Classic / Medium (Filter/Aeropress) / 250g per week" : 1,
+        "Monmouth Coffee. - Espresso / Wholebean / 250g every other week" : 1,
+        "Monmouth Coffee. - Classic / Coarse (French Press) / 250g per week" : 2,
+        "Monmouth Coffee. - Classic / Coarse (French Press) / 250g every other week" : 1,
+        "Monmouth Coffee. - Our Pick / Wholebean / 250g every other week" : 1,
+        "Monmouth Coffee. - Espresso / Fine (Espresso/Moka Pot) / 250g every other week" : 1,
+        "Monmouth Coffee. - Our Pick / Medium (Filter/Aeropress) / 250g per week" : 1,
+        "Eight Week Gift Subscription" : 1,
+        "Monmouth Coffee. - Our Pick / Coarse (French Press) / 250g every other week" : 1,
+        "Monmouth Coffee. - Classic / Wholebean / 250g per week" : 1
+    }
+
+    actual_items = processor.process_orders(outfile)
+
+    print(actual_items)
 
 
 if __name__ == "__main__":

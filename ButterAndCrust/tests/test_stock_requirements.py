@@ -3,10 +3,7 @@ import datetime as dt
 import os
 
 from ButterAndCrust.lib.OrderProcessor import OrderProcessor
-from ButterAndCrust.lib.DB.Tables.AirTable import CompressedOrderHistory
-import ButterAndCrust.lib.DB.DB_queries as DB
-
-DB_LOC = os.path.dirname(__file__) + "/mockdata/OrderHistory.db"
+from ButterAndCrust.lib.DB.Tables.CompressedOrderHistory import airCompressedOrderHistory
 
 def test_stock_requirements():
 
@@ -15,7 +12,7 @@ def test_stock_requirements():
 
     base_key = "appWCrLerVduIq5SR"
     api_key = "keyQNWjWomXyaBGJK"
-    table = CompressedOrderHistory(base_key, api_key)
+    table = airCompressedOrderHistory(base_key, api_key)
 
     processor = OrderProcessor(filepath, delivery_date, table)
     processor._testing = True

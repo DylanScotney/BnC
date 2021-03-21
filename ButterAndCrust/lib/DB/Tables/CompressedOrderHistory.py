@@ -181,7 +181,7 @@ class airCompressedOrderHistory(Airtable, ICompressedOrderHistory):
 
         return df
 
-    def sync_by_ID(self, records):
+    def sync_by_ID(self, records, update=False):
         """
         Will syncronise a list of records onto the table. 
         Updates existing records and inserts new ones
@@ -199,8 +199,10 @@ class airCompressedOrderHistory(Airtable, ICompressedOrderHistory):
         records_to_insert = [r for r in records if r['ID'] not in IDs_to_update]
         records_to_update = [{'id': self.match('ID', r['ID'])['id'], 'fields': r} for r in records if r['ID'] in IDs_to_update]
 
-        self.batch_insert(records_to_insert)        
-        self.batch_update(records_to_update)
+        self.batch_insert(records_to_insert)
+        
+        if update:    
+            self.batch_update(records_to_update)
 
 class sqlCompressedOrderHistory(SQLTable, ICompressedOrderHistory):
     """
