@@ -206,7 +206,7 @@ template = ("""
     align-items: center;
     margin: 1.4em 0;
     page-break-inside: avoid;
-    font-size: 20px;
+    font-size: 24px;
     }}
    
     .flex-line-item-img {{
