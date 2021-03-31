@@ -207,8 +207,8 @@ class PackingSlipManager():
         for desc in order.lineitems:
             item = order.lineitems[desc]['item']
             qty = order.lineitems[desc]['quantity']
-            item_desc = item.friendly_desc if qty == 1 else "<strong>" + item.friendly_desc + "</strong>"
-            qty_str = str(qty) if qty == 1 else "<strong>" + str(qty) + "</strong>"
+            item_desc = item.friendly_desc if qty == 1 else "<strong><u>" + item.friendly_desc + "</u></strong>"
+            qty_str = str(qty) if qty == 1 else "<strong><u>" + str(qty) + "</u></strong>"
 
             item_str += item_context.format(
                                             # lineitem_image=item.img,
