@@ -210,16 +210,19 @@ class PackingSlipManager():
         item_str = ""
 
         for desc in order.lineitems:
-            item = order.lineitems[desc]['item']
-            qty = order.lineitems[desc]['quantity']
-            item_desc = item.friendly_desc if qty == 1 else "<strong><u>" + item.friendly_desc + "</u></strong>"
-            qty_str = str(qty) if qty == 1 else "<strong><u>" + str(qty) + "</u></strong>"
 
-            item_str += item_context.format(
-                                            # lineitem_image=item.img,
-                                            lineitem=item_desc,
-                                            lineitem_qty=qty_str,
-                                        )
+            # ignore any subscription items from packing slip
+            if "subscription" not in desc.lower():
+                item = order.lineitems[desc]['item']
+                qty = order.lineitems[desc]['quantity']
+                item_desc = item.friendly_desc if qty == 1 else "<strong><u>" + item.friendly_desc + "</u></strong>"
+                qty_str = str(qty) if qty == 1 else "<strong><u>" + str(qty) + "</u></strong>"
+
+                item_str += item_context.format(
+                                                # lineitem_image=item.img,
+                                                lineitem=item_desc,
+                                                lineitem_qty=qty_str,
+                                            )
 
         return html_template.format(
                     orderID=order.ID,
