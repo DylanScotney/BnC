@@ -169,7 +169,7 @@ class PackingSlipManager():
         # sort filenames so they are rendered in delivery order
         all_html_files.sort()
 
-        for i, file_chunk in enumerate(self._chunk(all_html_files, 100):
+        for i, file_chunk in enumerate(self._chunk(all_html_files, 100)):
             self.render_html_files_to_pdf(file_chunk, self.outfile + "_{num}.pdf".format(num=i))
 
         # delete contents once finished with them
