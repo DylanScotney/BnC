@@ -15,9 +15,9 @@ def main():
 
     routes_file = args.file
     delivery_date = check_input_date(args.date)
-    outfile = PC.DEFAULT_OUTPUT_LOCATION + "PackingSlips_{date}.pdf".format(date=delivery_date.strftime("%Y%m%d"))
+    outfile_format = PC.DEFAULT_OUTPUT_LOCATION + "PackingSlips_{date}".format(date=delivery_date.strftime("%Y%m%d"))
 
-    packing_slip_manager = PackingSlipManager(outfile, PC.WORKING_DIRECTORY,
+    packing_slip_manager = PackingSlipManager(outfile_format, PC.WORKING_DIRECTORY,
                                               html_template, PC.PATH_WKHTMLTOPDF)
     
     order_table = airCompressedOrderHistory(PC.base_key, PC.api_key)

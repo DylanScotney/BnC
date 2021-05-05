@@ -31,7 +31,12 @@ class PackingSlipManager():
         self.outfile = output_file
         self.html_template = template
         self.wkhtml_exe_path = wkhtml_exe_path
-    
+
+    def _chunk(self, iterable, chunk_size):
+        """Break iterable into chunks."""
+        for i in range(0, len(iterable), chunk_size):
+            yield iterable[i : i + chunk_size]
+
     def produce_packing_slips(self, delivery_date, route_order_file, order_table):
         """
         Produces the packing slips for a given delivery date and route 
@@ -115,10 +120,9 @@ class PackingSlipManager():
                         )
                     )
 
-                route_order = route_orders.loc[route_orders['Order_Number'] == order.ID].iloc[0]
+                route_order = route_orders.loc[route_orders['Tracking_ID'] == order.ID].iloc[0]
 
-                order.bike_name = route_order['Bike']
-                order.route_name = route_order['Route']
+                order.route_name = route_order['Rider']
                 stop_on_route = route_order['Stop on Route']
 
                 # safely process stop numbers
@@ -165,7 +169,8 @@ class PackingSlipManager():
         # sort filenames so they are rendered in delivery order
         all_html_files.sort()
 
-        self.render_html_files_to_pdf(all_html_files, self.outfile)
+        for i, file_chunk in enumerate(self._chunk(all_html_files, 100):
+            self.render_html_files_to_pdf(file_chunk, self.outfile + "_{num}.pdf".format(num=i))
 
         # delete contents once finished with them
         working_dir.clear_working_dir()
